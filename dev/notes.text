@@ -1,0 +1,57 @@
+(in-package metabang.graph)
+
+(in-package cl-graph)
+(defun is-connected-p (g)
+  (let ((count 0))
+    (cl-graph::breadth-first-visitor g (first-item g) (lambda (v)
+                                                        (declare (ignore v))
+                                                        (incf count)))
+    (= count (size g))))
+
+(let ((g (make-container 'graph-container))
+      ) 
+  (loop for v in '(a b c d e) do
+        (add-vertex g v))
+  (loop for (v1 . v2) in '((a . b) (a . c) (b . d) (c . e)) do
+        (add-edge-between-vertexes g v1 v2))
+  g
+  (is-connected-p g))
+
+(let ((g (make-container 'graph-container))
+      ) 
+  (loop for v in '(a b c d e) do
+        (add-vertex g v))
+  (loop for (v1 . v2) in '((a . b) (a . c) (b . d)) do
+        (add-edge-between-vertexes g v1 v2))
+  g
+  (is-connected-p g))
+
+
+
+#|
+searching functions
+|#
+
+#|
+nearest-common-descendent
+adjacentp 
+adjacentp*
+all-next-vertexes
+all-next-vertexes*
+all-previous-vertexes
+all-previous-vertexes*
+|#
+
+add-edge doesn't use force-new? or other args
+
+I'd like to be able to (setf (edges g a b) c) or something
+
+pull id-pools from AFS to use for graph and edge id's
+
+
+;;; ---------------------------------------------------------------------------
+
+ok - do vertexes know their graph? edges their vertexes?
+ok - edges can be defined 'generically'
+ok - in-undirected-cycle-p uses loop instead of iterate-vertexes
+

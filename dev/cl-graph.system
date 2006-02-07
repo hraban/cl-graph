@@ -1,0 +1,72 @@
+;;; -*- Mode: Lisp; package: CL-USER; Syntax: Common-lisp; Base: 10 -*-
+
+#|
+
+Copyright 199?-2002 Experimental Knowledge Systems Lab, University of Massachusetts Amherst
+Professor Paul Cohen, Director
+
+Author: Westy, et. al.  (most recent working over by Gary King, Brent Heeringa, Louis Theran)
+
+|#
+
+(in-package :COMMON-LISP-USER)
+
+;;; ---------------------------------------------------------------------------
+;;; glu Utilities
+;;; ---------------------------------------------------------------------------
+
+(glu-define-logical-pathname-translations (cl-graph)
+  (source)
+  (utils (:back :back "utils" "dev"))
+  (lift  (:back :back "lift" "dev")))
+
+;;; ---------------------------------------------------------------------------
+
+(setf (glu-system-source-file 'lift)
+      "cl-graph:lift;lift.system")
+
+
+;;; ---------------------------------------------------------------------------
+;;; system definition 
+;;; ---------------------------------------------------------------------------
+
+(define-glu-system :cl-graph 
+  ((("package"
+
+     "macros"
+     "graph"
+     "graph-container"
+     "graph-matrix"
+     "graph-metrics"
+     #+NotYet "graph-generation"
+     "graph-algorithms"
+     "graphviz-support"))
+   
+   ;; associates
+   (("notes")
+    :associates? t))
+  
+  :base-dir "cl-graph:source;"
+  :bin-identifiers (:platform :vendor)
+  :include-in-menu nil
+  :top-level nil
+  :depends-on (:metatilities :cl-containers metabang.bind :cl-mathstats)
+  :test-system :test-cl-graph)
+
+;;; ---------------------------------------------------------------------------
+
+(define-glu-system :test-cl-graph 
+  ("test-graph"
+   "test-graph-container"
+   "test-graph-metrics"
+   "test-graph-algorithms")
+  :base-dir "cl-graph:source;"
+  :bin-identifiers (:platform :vendor)
+  :include-in-menu nil
+  :top-level nil
+  :depends-on (:cl-graph))
+
+
+;;; ***************************************************************************
+;;; *                              End of File                                *
+;;; ***************************************************************************
