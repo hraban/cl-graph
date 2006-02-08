@@ -248,3 +248,195 @@ B--D []
   (apply #'dot->graph g (namestring stream) args))
 
 |#
+
+(defparameter *dot-graph-attributes*
+  '((:size text)
+    (:page text)
+    (:ratio (:fill :compress :auto)) ;; Could actually be a float number too
+    (:margin float)
+    (:nodesep float)
+    (:ranksep float)
+    (:ordering (:out))
+    (:rankdir ("LR" "RL" "BT"))
+    (:pagedir text)
+    (:rank (:same :min :max))
+    (:rotate integer)
+    (:center integer)
+    (:nslimit float)
+    (:mclimit float)
+    (:layers text)
+    (:color text)
+    (:bgcolor text)))
+
+(defparameter *dot-vertex-attributes*
+  '((:height integer)
+    (:width integer)
+    (:fixed-size boolean)
+    (:label text)
+    (:shape (:record :plaintext :ellipse :circle :egg :triangle :box
+             :diamond :trapezium :parallelogram :house :hexagon :octagon
+             :doublecircle))
+    (:fontsize integer)
+    (:fontname text)
+    (:color text)
+    (:fillcolor text)
+    (:style (:filled :solid :dashed :dotted :bold :invis))
+    (:layer text)))
+
+(defparameter *dot-edge-attributes*
+  '((:minlen integer)
+    (:weight integer)
+    (:label text)
+    (:fontsize integer)
+    (:fontname text)
+    (:fontcolor text)
+    (:style (:solid :dashed :dotted :bold :invis))
+    (:color text)
+    (:dir (:forward :back :both :none))
+    (:tailclip boolean)
+    (:headclip boolean)
+    (:arrowhead (:none :normal :inv :dot :odot :invdot :invodot :tee
+                 :empty :invempty :open :halfopen :diamond :odiamond
+                 :box :obox :crow))
+    (:arrowtail (:none :normal :inv :dot :odot :invdot :invodot :tee
+                 :empty :invempty :open :halfopen :diamond :odiamond
+                 :box :obox :crow))
+    (:headlabel text)
+    (:taillabel text)
+    (:labelfontsize integer)
+    (:labelfontname text)
+    (:labelfontcolor text)
+    (:labeldistance integer)
+    (:port-label-distance integer)
+    (:decorate boolean)
+    (:samehead boolean)
+    (:sametail boolean)
+    (:constraint boolean)
+    (:layer text)))
+
+(defclass* dot-attributes-mixin ()
+   ((dot-attributes nil ia)))
+
+(defclass* dot-graph-mixin (dot-attributes-mixin) ())
+(defclass* dot-vertex-mixin (dot-attributes-mixin) ())
+(defclass* dot-edge-mixin (dot-attributes-mixin) ())
+
+(defclass* dot-graph (graph-container dot-graph-mixin)
+  ()
+  (:default-initargs
+    :vertex-class 'dot-vertex
+    :directed-edge-class 'dot-edge
+    :undirected-edge-class 'dot-edge))
+
+(defclass* dot-vertex (graph-container-vertex dot-vertex-mixin) ())
+(defclass* dot-edge (graph-container-edge dot-edge-mixin) ())
+(defclass* dot-directed-edge (directed-edge-mixin dot-edge) ())
+
+(defmethod graph->dot-properties ((graph dot-graph) (stream t))
+  (loop for (name value) on (dot-attributes graph) by #'cddr
+        do
+        (print-dot-key-value name value *dot-graph-attributes* stream)
+        (format stream "                 ;~%")))
+
+(defmethod vertex->dot ((vertex dot-vertex) (stream t))
+  (format-dot-attributes vertex *dot-vertex-attributes* stream))
+
+(defmethod edge->dot ((edge dot-edge) (stream t))
+  (format-dot-attributes edge *dot-edge-attributes* stream))
+
+(defun format-dot-attributes (object dot-attributes stream)
+  (loop for (name value) on (dot-attributes object) by #'cddr
+        for prefix = "" then "," do
+        (write-string prefix stream)
+        (print-dot-key-value name value dot-attributes stream)))
+
+(defun print-dot-key-value (key value dot-attributes stream)
+  (destructuring-bind (key value-type)
+      (or (assoc key dot-attributes)
+          (error "Invalid attribute ~S" key))
+    (format stream "~a=~a" (string-downcase key)
+            (etypecase value-type
+              ((member integer)
+               (unless (typep value 'integer)
+                 (error "Invalid value for ~S: ~S is not an integer"
+                        key value))
+               value)
+              ((member boolean)
+               (if value
+                   "true"
+                 "false"))
+              ((member text)
+               (textify value))
+              ((member float)
+               (coerce value 'single-float))
+              (list
+               (unless (member value value-type :test 'equal)
+                 (error "Invalid value for ~S: ~S is not one of ~S"
+                        key value value-type))
+               (if (symbolp value)
+                   (string-downcase value)
+                 value))))))
+
+(defun textify (object)
+  (let ((string (princ-to-string object)))
+    (with-output-to-string (stream)
+      (write-char #\" stream)
+      (loop for c across string do
+            ;; Note: #\\ should not be escaped to allow \n, \l, \N, etc.
+            ;; to work.
+            (case c
+              ((#\")
+               (write-char #\\ stream)
+               (write-char c stream))
+              (#\Newline
+               (write-char #\\ stream)
+               (write-char #\n stream))
+              (t
+               (write-char c stream))))
+      (write-char #\" stream))))
+
+;;; ---------------------------------------------------------------------------
+;
+; Calls the dot executable to create external output for graphs
+;
+#+(or win32 mswindows)
+(defvar *dot-path* "\"C:/Program Files/ATT/Graphviz/bin/dot.exe\"")
+#+(or linux unix)
+(defvar *dot-path* "/usr/bin/dot" "Path to `dot`")
+
+(defmethod graph->dot-external ((g basic-graph) file-name &key (type :ps))
+  "Generate an external represenation of a graph to a file, by running
+the program in *dot-path*."
+  (let ((dot-string (graph->dot g nil))
+        (dot-type (concatenate 'string "-T" (string-downcase (symbol-name type)))))
+    #+lispworks (with-open-stream
+                    (s (sys:open-pipe (concatenate 'string *dot-path* " -Tpng -o" file-name)
+                                      :direction :input))
+                    (write-line dot-string s)
+                    (force-output s)
+		    (close s))
+    #+sbcl
+    (sb-ext:run-program *dot-path*
+                        (list dot-type "-o" file-name)
+                        :input (make-string-input-stream dot-string)
+                        :output *standard-output*)
+    #-(or sbcl lispworks)
+    (error "Don't know how to execute a program on this platform")))
+
+;;; ---------------------------------------------------------------------------
+;
+; Test dot external
+;
+(defun test-dot-external ()
+  (let* ((g (make-graph 'dot-graph))
+         (v1 (add-vertex g 'a :dot-attributes '(:shape :box
+                                                :color :blue)))
+         (v2 (add-vertex g 'b :dot-attributes '(:shape :circle
+                                                :style :filled
+                                                :color :yellow))))
+    (add-edge-between-vertexes g v1 v2
+                               :dot-attributes '(:arrowhead :open
+                                                 :arrowtail :normal
+                                                 :style :dotted))
+    (print (graph->dot g nil))
+    (graph->dot-external g "/tmp/test.gif" :type :gif)))
