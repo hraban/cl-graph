@@ -79,6 +79,10 @@ DISCUSSION
    #:edge->dot
    #:graph->dot-properties
    #:subgraph-containing
+   #:graph->dot-external
+   #:dot-graph
+   #:dot-vertex
+   #:dot-edge
    
    #:connected-graph-p
    #:find-connected-components
