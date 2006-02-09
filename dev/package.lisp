@@ -83,6 +83,7 @@ DISCUSSION
    #:dot-graph
    #:dot-vertex
    #:dot-edge
+   #:dot-attributes
    
    #:connected-graph-p
    #:find-connected-components
