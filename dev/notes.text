@@ -1,3 +1,65 @@
+#|
+(in-package cl-graph)
+
+(let ((g (make-instance 'graph-container
+           :default-edge-type :directed)))
+  (add-edge-between-vertexes g :a :b)
+  (add-edge-between-vertexes g :a :c)
+  (add-edge-between-vertexes g :b :d)
+  (graph->dot g t))
+-> (prints)
+digraph G {
+graph [];
+
+3 []
+1 []
+0 []
+2 []
+1->3 []
+0->1 []
+0->2 []
+}
+#<GRAPH-CONTAINER 4 #x17D9B526>
+
+(defclass* weighted-directed-edge (directed-edge-mixin weighted-edge)
+  ())
+
+(let ((g (make-instance 'graph-container
+           :default-edge-class 'weighted-directed-edge)))
+  (add-edge-between-vertexes g :a :b)
+  (add-edge-between-vertexes g :a :c)
+  (add-edge-between-vertexes g :b :d :weight 2.5)
+  (graph->dot g t
+              :edge-formatter 
+              (lambda (e s) (format s "weight=~D" (weight e)))))
+-> (prints)
+graph G {
+graph [];
+
+3 []
+1 []
+0 []
+2 []
+0--1 [dir=forward, ]
+1--3 []
+0--2 []
+}
+-> (returns)
+#<GRAPH-CONTAINER 4 #x17DAFE36>
+
+
+(defun weighted-sum-of-connected-vertexes (vertex)
+  (let ((sum 0))
+    (iterate-target-edges
+     vertex
+     (lambda (e)
+       (incf sum (* (weight e) (element (other-vertex e vertex))))))
+    sum))
+
+graph-roots
+|#
+
+
 (in-package metabang.graph)
 
 (in-package cl-graph)

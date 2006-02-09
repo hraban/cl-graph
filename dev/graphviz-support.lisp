@@ -315,22 +315,30 @@ B--D []
     (:layer text)))
 
 (defclass* dot-attributes-mixin ()
-   ((dot-attributes nil ia)))
+  ((dot-attributes nil ia))
+  (:export-p t))
 
-(defclass* dot-graph-mixin (dot-attributes-mixin) ())
-(defclass* dot-vertex-mixin (dot-attributes-mixin) ())
-(defclass* dot-edge-mixin (dot-attributes-mixin) ())
+(defclass* dot-graph-mixin (dot-attributes-mixin) ()
+  (:export-p t))
+(defclass* dot-vertex-mixin (dot-attributes-mixin) ()
+  (:export-p t))
+(defclass* dot-edge-mixin (dot-attributes-mixin) ()
+  (:export-p t))
 
 (defclass* dot-graph (graph-container dot-graph-mixin)
   ()
   (:default-initargs
     :vertex-class 'dot-vertex
-    :directed-edge-class 'dot-edge
-    :undirected-edge-class 'dot-edge))
+    :directed-edge-class 'dot-directed-edge
+    :undirected-edge-class 'dot-edge)
+  (:export-p t))
 
-(defclass* dot-vertex (graph-container-vertex dot-vertex-mixin) ())
-(defclass* dot-edge (graph-container-edge dot-edge-mixin) ())
-(defclass* dot-directed-edge (directed-edge-mixin dot-edge) ())
+(defclass* dot-vertex (graph-container-vertex dot-vertex-mixin) ()
+  (:export-p t))
+(defclass* dot-edge (graph-container-edge dot-edge-mixin) ()
+  (:export-p t))
+(defclass* dot-directed-edge (directed-edge-mixin dot-edge) ()
+  (:export-p t))
 
 (defmethod graph->dot-properties ((graph dot-graph) (stream t))
   (loop for (name value) on (dot-attributes graph) by #'cddr
