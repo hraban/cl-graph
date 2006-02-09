@@ -57,7 +57,7 @@ ways to specify the same color.
          (funcall vertex-labeler v stream)
          (princ "\", " stream))
        (funcall vertex-formatter v stream)
-       (princ "]" stream))))
+       (princ "];" stream))))
   
   (let ((directed-edge-connector (if (contains-undirected-edge-p g) "--" "->"))
         (directed-edge-tag (when (and (contains-undirected-edge-p g)
@@ -76,7 +76,7 @@ ways to specify the same color.
                (funcall edge-labeler e stream)
                (princ "\"," stream))
              (funcall edge-formatter e stream)
-             (princ "]" stream)))
+             (princ "];" stream)))
       ;; directed edges
       (iterate-vertexes 
        g
