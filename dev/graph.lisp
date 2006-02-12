@@ -161,11 +161,11 @@ something is putting something on the vertexes plist's
    (largest-vertex-id 0 r)
    (largest-edge-id 0 r)
    (vertex-class 'basic-vertex ir
-                 "The class of the vertexes in the graph.")
+                 "The class of the vertexes in the graph. This must extend the base-class for vertexes of the graph type. E.g., all vertexes of a graph-container must extend graph-container-vertex.")
    (directed-edge-class 'basic-directed-edge ir
-                        "The class used to create directed edges in the graph.")
+                        "The class used to create directed edges in the graph. This must extend the base-class for edges of the graph type and directed-edge-mixin. E.g., the directed-edge-class of a graph-container must extend graph-container-edge and directed-edge-mixin.")
    (undirected-edge-class 'basic-edge ir
-                          "The class used to create undirected edges in the graph.")
+                          "The class used to create undirected edges in the graph. This must extend the base-class for edges of the graph type. E.g., all edges of a graph-container must extend graph-container-edge")
    (contains-directed-edge-p nil ar 
                              "Returns true if graph contains at least one directed edge. [?? Not sure if this is really keep up-to-date.]")
    (contains-undirected-edge-p nil ar
