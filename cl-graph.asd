@@ -20,7 +20,7 @@ instructions."))
 
 (asdf:operate 'asdf:load-op 'asdf-system-connections)
 
-(defsystem cl-graph 
+(defsystem cl-graph
   :version "0.8"
   :author "Gary Warren King <gwking@metabang.com>"
   :maintainer "Gary Warren King <gwking@metabang.com>"
@@ -42,10 +42,11 @@ instructions."))
                                             :depends-on ("graph"))
                                      (:file "graph-algorithms"
                                             :depends-on ("graph"))
-                                     (:file "graphviz-support"
-                                            :depends-on ("graph"))
                                      
-                                     (:static-file "notes.text")))
+                                     (:static-file "notes.text")
+
+                                     (:module "graphviz" :depends-on ("graph")
+                                              :components ((:file "graphviz-support")))))
                (:module "website"
                         :components ((:module "source"
                                               :components ((:static-file "index.lml"))))))
@@ -65,3 +66,11 @@ instructions."))
                         :components ((:file "graph-and-variates")
                                      (:file "graph-generation"
                                             :depends-on ("graph-and-variates"))))))
+
+(asdf:defsystem-connection cl-graph-and-cl-graphviz
+  :requires (cl-graph cl-graphviz)
+  :components ((:module "dev"
+                        :components
+                        ((:module "graphviz"
+                                  :components
+                                  ((:file "graphviz-support-optional")))))))

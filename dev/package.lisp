@@ -92,6 +92,10 @@ DISCUSSION
    #:target-vertex
    #:source-vertex
    
+   #:layout-graph-with-graphviz
+   #:dot-attribute-value
+   #:dot-attribute
+
    #:add-edge                      ; graph edge
    #:delete-edge                   ; graph edge
    

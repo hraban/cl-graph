@@ -8,17 +8,11 @@ Copyright 1992 - 2005 Experimental Knowledge Systems Lab,
 University of Massachusetts Amherst MA, 01003-4610
 Professor Paul Cohen, Director
 
-Author: Gary King
+Author: Gary King, Levente Mészáros, Attila Lendvai
 
 DISCUSSION
 
-A color value can be a huesaturation-
-brightness triple (three floating point numbers between 0 and 1, separated
-by commas); one of the colors names listed in Appendix G (borrowed from
-some version of the X window system); or a red-green-blue (RGB) triple4 (three
-hexadecimal number between 00 and FF, preceded by the character Õ#Õ). Thus,
-the values "orchid", "0.8396,0.4862,0.8549" and #DA70D6 are three
-ways to specify the same color.
+This file contains the stuff that does not depend on cl-graphviz.
 
 |#
 (in-package metabang.graph)
@@ -180,9 +174,8 @@ B--D []
 (defmethod graph->dot ((g basic-graph) (stream (eql nil))
                        &rest args &key &allow-other-keys)
   (declare (dynamic-extent args))
-  (let ((out (make-string-output-stream)))
-    (apply #'graph->dot g out args)
-    (get-output-stream-string out)))
+  (with-output-to-string (out)
+    (apply #'graph->dot g out args)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -250,7 +243,8 @@ B--D []
 |#
 
 (defparameter *dot-graph-attributes*
-  '((:size text)
+  '((:size coord)
+    (:bb bounding-box)
     (:page text)
     (:ratio (:fill :compress :auto)) ;; Could actually be a float number too
     (:margin float)
@@ -269,8 +263,9 @@ B--D []
     (:bgcolor text)))
 
 (defparameter *dot-vertex-attributes*
-  '((:height integer)
-    (:width integer)
+  '((:pos coordinate)
+    (:height float)
+    (:width float)
     (:fixed-size boolean)
     (:label text)
     (:shape (:record :plaintext :ellipse :circle :egg :triangle :box
@@ -284,7 +279,8 @@ B--D []
     (:layer text)))
 
 (defparameter *dot-edge-attributes*
-  '((:minlen integer)
+  '((:pos spline)
+    (:minlen integer)
     (:weight integer)
     (:label text)
     (:fontsize integer)
@@ -340,23 +336,45 @@ B--D []
 (defclass* dot-directed-edge (directed-edge-mixin dot-edge) ()
   (:export-p t))
 
-(defmethod graph->dot-properties ((graph dot-graph) (stream t))
+
+(defmethod (setf dot-attribute) :before (value (attr symbol) (thing dot-attributes-mixin))
+  (ensure-valid-dot-attribute attr thing))
+
+(defmethod (setf dot-attribute) (value (attr symbol) (thing dot-attributes-mixin))
+  (setf (getf (dot-attributes thing) attr) value))
+
+(defmethod dot-attribute-value ((attr symbol) (thing dot-attributes-mixin))
+  (getf (dot-attributes thing) attr))
+
+(defmethod graph->dot-properties ((graph dot-graph-mixin) (stream t))
   (loop for (name value) on (dot-attributes graph) by #'cddr
         do
         (print-dot-key-value name value *dot-graph-attributes* stream)
         (format stream "                 ;~%")))
 
-(defmethod vertex->dot ((vertex dot-vertex) (stream t))
+(defmethod vertex->dot ((vertex dot-vertex-mixin) (stream t))
   (format-dot-attributes vertex *dot-vertex-attributes* stream))
 
-(defmethod edge->dot ((edge dot-edge) (stream t))
+(defmethod edge->dot ((edge dot-edge-mixin) (stream t))
   (format-dot-attributes edge *dot-edge-attributes* stream))
 
 (defun format-dot-attributes (object dot-attributes stream)
   (loop for (name value) on (dot-attributes object) by #'cddr
-        for prefix = "" then "," do
+        for prefix = "" then ", " do
         (write-string prefix stream)
         (print-dot-key-value name value dot-attributes stream)))
+
+(defmethod ensure-valid-dot-attribute (key (object dot-graph-mixin))
+  (or (assoc key *dot-graph-attributes*)
+      (error "Invalid dot graph attribute ~S" key)))
+
+(defmethod ensure-valid-dot-attribute (key (object dot-vertex-mixin))
+  (or (assoc key *dot-vertex-attributes*)
+      (error "Invalid dot vertex attribute ~S" key)))
+
+(defmethod ensure-valid-dot-attribute (key (object dot-edge-mixin))
+  (or (assoc key *dot-edge-attributes*)
+      (error "Invalid dot edge attribute ~S" key)))
 
 (defun print-dot-key-value (key value dot-attributes stream)
   (destructuring-bind (key value-type)
@@ -364,6 +382,28 @@ B--D []
           (error "Invalid attribute ~S" key))
     (format stream "~a=~a" (string-downcase key)
             (etypecase value-type
+              ((member coordinate)
+               (with-output-to-string (str)
+                 (princ "\"" str)
+                 (let ((first t))
+                   (dolist (el value)
+                     (unless first
+                       (princ "," str))
+                     (princ el str)
+                     (setf first nil)))
+                 (princ "\"" str)))
+              ((member spline bounding-box)
+               (with-output-to-string (str)
+                 (princ "\"" str)
+                 (let ((first t))
+                   (dolist (el value)
+                     (unless first
+                       (princ " " str))
+                     (princ (first el) str)
+                     (princ "," str)
+                     (princ (second el) str)
+                     (setf first nil)))
+                 (princ "\"" str)))
               ((member integer)
                (unless (typep value 'integer)
                  (error "Invalid value for ~S: ~S is not an integer"
@@ -372,7 +412,7 @@ B--D []
               ((member boolean)
                (if value
                    "true"
-                 "false"))
+                   "false"))
               ((member text)
                (textify value))
               ((member float)
@@ -383,7 +423,7 @@ B--D []
                         key value value-type))
                (if (symbolp value)
                    (string-downcase value)
-                 value))))))
+                   value))))))
 
 (defun textify (object)
   (let ((string (princ-to-string object)))

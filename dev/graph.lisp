@@ -672,7 +672,7 @@ something is putting something on the vertexes plist's
          (error "~A not found in ~A" vertex graph))))
 
 ;;; ---------------------------------------------------------------------------
-
+;; TODO !!! dispatch is the same as the second method above
 (defmethod search-for-vertex ((graph basic-graph) (vertex t)
                               &key (key (vertex-key graph)) (test 'equal)
                               (error-if-not-found? t))
