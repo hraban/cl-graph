@@ -30,7 +30,7 @@ loaded when cl-graphviz is available.
          (args (list dot
                      :graph-visitor
                      (lambda (dot-graph)
-                       (setf (dot-attribute :bb g)
+                       (setf (dot-attribute-value :bb g)
                              (graphviz:graph-bounding-box dot-graph)))
 
                      :node-visitor
@@ -44,9 +44,9 @@ loaded when cl-graphviz is available.
                          ;; TODO search-for-vertex is sloooow, use a hashtable or
                          ;; introduce an graph-find-element-by-id-mixin, or similar
                          (let ((vertex (find-vertex-by-id g (graphviz:node-name node))))
-                           (setf (dot-attribute :pos vertex) pos)
-                           (setf (dot-attribute :width vertex) width)
-                           (setf (dot-attribute :height vertex) height))))
+                           (setf (dot-attribute-value :pos vertex) pos
+                                 (dot-attribute-value :width vertex) width
+                                 (dot-attribute-value :height vertex) height))))
                      
                      :edge-visitor
                      (lambda (edge)
@@ -65,7 +65,8 @@ loaded when cl-graphviz is available.
                               ;;        (graphviz:bezier-points bezier))
                               (dolist (el (graphviz:bezier-points bezier))
                                 (push el bezier-points))))
-                           (setf (dot-attribute :pos real-edge) (nreverse bezier-points))))))))
+                           (setf (dot-attribute-value :pos real-edge)
+                                 (nreverse bezier-points))))))))
     (when algorithm-provided-p
       (nconc args (list :algorithm algorithm)))
     (apply 'graphviz:layout-dot-format args))

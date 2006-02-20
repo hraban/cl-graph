@@ -321,7 +321,7 @@ B--D []
 (defclass* dot-edge-mixin (dot-attributes-mixin) ()
   (:export-p t))
 
-(defclass* dot-graph (graph-container dot-graph-mixin)
+(defclass* dot-graph (dot-graph-mixin graph-container)
   ()
   (:default-initargs
     :vertex-class 'dot-vertex
@@ -329,18 +329,18 @@ B--D []
     :undirected-edge-class 'dot-edge)
   (:export-p t))
 
-(defclass* dot-vertex (graph-container-vertex dot-vertex-mixin) ()
+(defclass* dot-vertex (dot-vertex-mixin graph-container-vertex) ()
   (:export-p t))
-(defclass* dot-edge (graph-container-edge dot-edge-mixin) ()
+(defclass* dot-edge (dot-edge-mixin graph-container-edge) ()
   (:export-p t))
-(defclass* dot-directed-edge (directed-edge-mixin dot-edge) ()
+(defclass* dot-directed-edge (dot-edge directed-edge-mixin) ()
   (:export-p t))
 
 
-(defmethod (setf dot-attribute) :before (value (attr symbol) (thing dot-attributes-mixin))
+(defmethod (setf dot-attribute-value) :before (value (attr symbol) (thing dot-attributes-mixin))
   (ensure-valid-dot-attribute attr thing))
 
-(defmethod (setf dot-attribute) (value (attr symbol) (thing dot-attributes-mixin))
+(defmethod (setf dot-attribute-value) (value (attr symbol) (thing dot-attributes-mixin))
   (setf (getf (dot-attributes thing) attr) value))
 
 (defmethod dot-attribute-value ((attr symbol) (thing dot-attributes-mixin))
@@ -392,13 +392,25 @@ B--D []
                      (princ el str)
                      (setf first nil)))
                  (princ "\"" str)))
-              ((member spline bounding-box)
+              ((member spline)
                (with-output-to-string (str)
                  (princ "\"" str)
                  (let ((first t))
                    (dolist (el value)
                      (unless first
                        (princ " " str))
+                     (princ (first el) str)
+                     (princ "," str)
+                     (princ (second el) str)
+                     (setf first nil)))
+                 (princ "\"" str)))
+              ((member bounding-box)
+               (with-output-to-string (str)
+                 (princ "\"" str)
+                 (let ((first t))
+                   (dolist (el value)
+                     (unless first
+                       (princ ", " str))
                      (princ (first el) str)
                      (princ "," str)
                      (princ (second el) str)
