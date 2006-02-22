@@ -244,6 +244,7 @@ B--D []
   '((:size coordinate)
     (:bb bounding-box)
     (:page text)
+    (:dpi float)
     (:ratio (:fill :compress :auto)) ;; Could actually be a float number too
     (:margin float)
     (:nodesep float)
@@ -264,6 +265,7 @@ B--D []
   '((:pos coordinate)
     (:height float)
     (:width float)
+    (:margin float)
     (:fixed-size boolean)
     (:label text)
     (:shape (:record :plaintext :ellipse :circle :egg :triangle :box
@@ -347,6 +349,22 @@ B--D []
 (defmethod dot-attribute-value ((attr symbol) (thing dot-attributes-mixin))
   (getf (dot-attributes thing) attr))
 
+(defmacro defpixel-inch-accessors (name attr type)
+  (bind ((actual-name (form-symbol name "-IN-PIXELS")))
+    `(progn
+      (export ',actual-name)
+      (defmethod ,actual-name ((thing ,type))
+        "Return the attribute in pixels assuming 72 dpi"
+        (awhen (dot-attribute-value ,attr thing)
+          (* 72 it)))
+      (defmethod (setf ,actual-name) (value (thing ,type))
+        "Set the attribute in pixels assuming 72 dpi"
+        (setf (dot-attribute-value ,attr thing) (coerce (/ value 72) 'double-float))))))
+
+(defpixel-inch-accessors width :width dot-vertex-mixin)
+(defpixel-inch-accessors height :height dot-vertex-mixin)
+
+
 (defmethod graph->dot-properties ((graph dot-graph-mixin) (stream t))
   (loop for (name value) on (dot-attributes graph) by #'cddr
         do
@@ -429,7 +447,9 @@ B--D []
               ((member text)
                (textify value))
               ((member float)
-               (coerce value 'single-float))
+               ;; graphviz does not support the 1.2e-3 format
+               (with-output-to-string (str)
+                 (format str "~,f" (coerce value 'single-float))))
               (list
                (unless (member value value-type :test 'equal)
                  (error "Invalid value for ~S: ~S is not one of ~S"

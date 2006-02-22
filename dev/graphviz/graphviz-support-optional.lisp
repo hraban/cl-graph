@@ -31,7 +31,7 @@ loaded when cl-graphviz is available.
                      :graph-visitor
                      (lambda (dot-graph)
                        (setf (dot-attribute-value :bb g)
-                             (graphviz:graph-bounding-box dot-graph)))
+                               (graphviz:graph-bounding-box dot-graph)))
 
                      :node-visitor
                      (lambda (node)
