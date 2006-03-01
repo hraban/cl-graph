@@ -1428,6 +1428,13 @@ should include pointer back to original graph
 ;;; ---------------------------------------------------------------------------
 
 (defmethod generate-simple-preferential-attachment-graph
+           (generator (graph-class symbol) size minimum-degree)
+  (generate-simple-preferential-attachment-graph
+   generator (make-instance graph-class) size minimum-degree))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod generate-simple-preferential-attachment-graph
            (generator graph size minimum-degree)
   (bind ((m (make-array (list (* 2 size minimum-degree)))))
     (loop for v from 0 to (1- size) do
@@ -1646,7 +1653,7 @@ should include pointer back to original graph
 
 ;;; ---------------------------------------------------------------------------
 
-(Defmethod generate-acquaintance-network 
+(defmethod generate-acquaintance-network 
            (generator graph size death-probability iterations vertex-labeler
                       &key (duplicate-edge-function :ignore))
   ;; bring the graph up to size

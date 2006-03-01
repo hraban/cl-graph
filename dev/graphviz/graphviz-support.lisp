@@ -17,6 +17,11 @@ This file contains the stuff that does not depend on cl-graphviz.
 |#
 (in-package metabang.graph)
 
+(export '(
+	  print-dot-key-value
+	  *dot-graph-attributes*
+	  ))
+
 ;;; ---------------------------------------------------------------------------
 ;
 ; This outputs the graph to string in accordance with the DOT file format.  
@@ -243,7 +248,7 @@ B--D []
 |#
 
 (defparameter *dot-graph-attributes*
-  '((:size coord)
+  '((:size coordinate)
     (:bb bounding-box)
     (:page text)
     (:ratio (:fill :compress :auto)) ;; Could actually be a float number too
