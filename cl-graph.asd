@@ -33,7 +33,7 @@ instructions."))
                                      (:file "macros"
                                             :depends-on ("package"))
                                      (:file "graph"
-                                            :depends-on ("api"))
+                                            :depends-on ("api" "macros"))
                                      (:file "graph-container"
                                             :depends-on ("graph"))
                                      (:file "graph-matrix"
