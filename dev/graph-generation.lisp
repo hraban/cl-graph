@@ -99,6 +99,7 @@
 
 (defmethod generate-Gnm (generator (graph basic-graph) n m &key (label 'identity))
   (let ((max-edge-index (1- (combination-count n 2))))
+    (assert (<= m max-edge-index))
     #+Ignore
     (save-generation-information graph generator 'generate-gnm)
     (loop for i from 0 to (1- n) do
@@ -1653,6 +1654,15 @@ should include pointer back to original graph
 
 ;;; ---------------------------------------------------------------------------
 
+
+(defmethod generate-acquaintance-network 
+    (generator (class-name symbol) size death-probability iterations vertex-labeler
+     &key (duplicate-edge-function :ignore))
+  (generate-acquaintance-network 
+	 generator (make-instance class-name)
+	 size death-probability iterations vertex-labeler
+	 :duplicate-edge-function duplicate-edge-function))
+
 (defmethod generate-acquaintance-network 
            (generator graph size death-probability iterations vertex-labeler
                       &key (duplicate-edge-function :ignore))
@@ -1696,7 +1706,7 @@ should include pointer back to original graph
     (flet ((sample-other-vertex ()
              (loop for result = (sample-element (graph-vertexes graph) generator)
                    until (not (eq vertex result))
-                   finally (return result))))  ;; CTM: 'finally do' not legal in openMCL
+                   finally (return result))))
       (if neighbors
         (add-edge-between-vertexes 
          graph
@@ -1712,6 +1722,12 @@ should include pointer back to original graph
     (let ((vertex (sample-element (graph-vertexes graph) generator)))
       (delete-vertex graph vertex)
       (add-vertex graph (element vertex)))))
+
+#+Ignore
+(defun sv (v)
+  (format t "~%~A ~A" 
+	  v 
+	  (adjustable-array-p (contents (vertex-edges v)))))
   
 #+Test
 (generate-acquaintance-network
