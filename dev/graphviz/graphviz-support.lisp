@@ -19,6 +19,8 @@ This file contains the stuff that does not depend on cl-graphviz.
 
 (export '(
 	  print-dot-key-value
+	  dot-attribute-value
+	  dot-attributes-mixin
 	  *dot-graph-attributes*
 	  ))
 
@@ -278,10 +280,12 @@ B--D []
              :doublecircle))
     (:fontsize integer)
     (:fontname text)
+    (:fontcolor text)
     (:color text)
     (:fillcolor text)
     (:style (:filled :solid :dashed :dotted :bold :invis))
-    (:layer text)))
+    (:layer text)
+    (:url text)))
 
 (defparameter *dot-edge-attributes*
   '((:pos spline)
@@ -320,7 +324,11 @@ B--D []
   (:export-p t))
 
 (defclass* dot-graph-mixin (dot-attributes-mixin) ()
-  (:export-p t))
+  (:export-p t)
+  (:default-initargs
+    :vertex-class 'dot-vertex
+    :directed-edge-class 'dot-directed-edge
+    :undirected-edge-class 'dot-edge))
 (defclass* dot-vertex-mixin (dot-attributes-mixin) ()
   (:export-p t))
 (defclass* dot-edge-mixin (dot-attributes-mixin) ()
@@ -328,10 +336,6 @@ B--D []
 
 (defclass* dot-graph (dot-graph-mixin graph-container)
   ()
-  (:default-initargs
-    :vertex-class 'dot-vertex
-    :directed-edge-class 'dot-directed-edge
-    :undirected-edge-class 'dot-edge)
   (:export-p t))
 
 (defclass* dot-vertex (dot-vertex-mixin graph-container-vertex) ()
@@ -354,8 +358,7 @@ B--D []
 (defmethod graph->dot-properties ((graph dot-graph-mixin) (stream t))
   (loop for (name value) on (dot-attributes graph) by #'cddr
         do
-        (print-dot-key-value name value *dot-graph-attributes* stream)
-        (format stream "                 ;~%")))
+        (print-dot-key-value name value *dot-graph-attributes* stream)))
 
 (defmethod vertex->dot ((vertex dot-vertex-mixin) (stream t))
   (format-dot-attributes vertex *dot-vertex-attributes* stream))
@@ -385,7 +388,8 @@ B--D []
   (destructuring-bind (key value-type)
       (or (assoc key dot-attributes)
           (error "Invalid attribute ~S" key))
-    (format stream "~a=~a" (string-downcase key)
+    (write-name-for-dot key stream)
+    (format stream "=~a" 
             (etypecase value-type
               ((member coordinate)
                (with-output-to-string (str)
@@ -441,6 +445,12 @@ B--D []
                (if (symbolp value)
                    (string-downcase value)
                    value))))))
+
+(defmethod write-name-for-dot (attribute stream)
+  (format stream "~(~A~)" attribute))
+
+(defmethod write-name-for-dot ((attribute (eql :url)) stream)
+  (format stream "URL"))
 
 (defun textify (object)
   (let ((string (princ-to-string object)))
