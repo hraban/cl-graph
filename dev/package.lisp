@@ -9,10 +9,10 @@ DISCUSSION
 |#
 (in-package common-lisp-user)
 
-(defpackage "CL-GRAPH"
-  (:use "COMMON-LISP" "METATILITIES" "CL-CONTAINERS" 
-        "METABANG.BIND" "METABANG.MATH")
-  (:nicknames "METABANG.GRAPH")
+(defpackage #:cl-graph
+  (:use #:common-lisp #:metatilities #:cl-containers 
+        #:metabang.bind #:metabang.math)
+  (:nicknames #:metabang.graph)
   (:documentation "CL-Graph is a Common Lisp library for manipulating graphs and running graph algorithms.")
   
   (:export 
@@ -169,4 +169,11 @@ DISCUSSION
    #:graph-mixing-matrix
    #:graph-edge-mixture-matrix
    #:assortativity-coefficient
-   #:vertex-degree-summary))
+   #:vertex-degree-summary)
+
+  (:export
+   #:print-dot-key-value
+   #:dot-attribute-value
+   #:dot-attributes-mixin
+   #:*dot-graph-attributes*
+   ))

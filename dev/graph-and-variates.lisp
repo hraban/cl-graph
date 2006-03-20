@@ -12,6 +12,7 @@
        cl-variates:next-element)
  "CL-GRAPH")
 
-(use-package (find-package "CL-VARIATES") 
-             (find-package "CL-GRAPH"))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (use-package (find-package 'cl-variates) 
+               (find-package 'cl-graph)))
 

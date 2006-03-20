@@ -1,31 +1,32 @@
 (in-package metabang.graph)
 
-(export '(generate-Gnp
-          generate-Gnm
-          generate-undirected-graph-via-assortativity-matrix
-          generate-undirected-graph-via-vertex-probabilities
-          generate-multi-group-graph-fixed
-          #+Ignore generate-girvan-newman-graph
-          generate-scale-free-graph
-          generate-assortative-graph-with-degree-distributions
-          
-          generate-simple-preferential-attachment-graph
-          generate-preferential-attachment-graph
-          
-          generate-acquaintance-network
-          generate-acquaintance-network-until-stable
-
-          generate-graph-by-resampling-edges
-
-          sample-edge
-          basic-edge-sampler
-          weighted-edge-sampler
-          simple-group-id-generator
-          simple-group-id-parser
-          
-          make-degree-sampler
-          poisson-vertex-degree-distribution
-          power-law-vertex-degree-distribution))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (export '(generate-Gnp
+            generate-Gnm
+            generate-undirected-graph-via-assortativity-matrix
+            generate-undirected-graph-via-vertex-probabilities
+            generate-multi-group-graph-fixed
+            #+Ignore generate-girvan-newman-graph
+            generate-scale-free-graph
+            generate-assortative-graph-with-degree-distributions
+            
+            generate-simple-preferential-attachment-graph
+            generate-preferential-attachment-graph
+            
+            generate-acquaintance-network
+            generate-acquaintance-network-until-stable
+            
+            generate-graph-by-resampling-edges
+            
+            sample-edge
+            basic-edge-sampler
+            weighted-edge-sampler
+            simple-group-id-generator
+            simple-group-id-parser
+            
+            make-degree-sampler
+            poisson-vertex-degree-distribution
+            power-law-vertex-degree-distribution)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; classes

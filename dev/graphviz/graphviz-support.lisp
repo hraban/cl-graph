@@ -17,13 +17,6 @@ This file contains the stuff that does not depend on cl-graphviz.
 |#
 (in-package metabang.graph)
 
-(export '(
-	  print-dot-key-value
-	  dot-attribute-value
-	  dot-attributes-mixin
-	  *dot-graph-attributes*
-	  ))
-
 ;;; ---------------------------------------------------------------------------
 ;
 ; This outputs the graph to string in accordance with the DOT file format.  
@@ -347,6 +340,7 @@ B--D []
 
 
 (defmethod (setf dot-attribute-value) :before (value (attr symbol) (thing dot-attributes-mixin))
+  (declare (ignore value))
   (ensure-valid-dot-attribute attr thing))
 
 (defmethod (setf dot-attribute-value) (value (attr symbol) (thing dot-attributes-mixin))
