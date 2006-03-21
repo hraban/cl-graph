@@ -312,12 +312,12 @@ For more information about DOT file format, search the web for 'DOTTY' and
 
 ;;; ---------------------------------------------------------------------------
 
-(defgeneric generate-Gnm (generator graph n m &key)
+(defgeneric generate-gnm (generator graph n m &key)
   (:documentation "Generate a 'classic' random graph G(n, m) with n vertexes and m edges."))
 
 ;;; ---------------------------------------------------------------------------
 
-(defgeneric generate-Gnp (generator graph n p &key)
+(defgeneric generate-gnp (generator graph n p &key)
   (:documentation  "Generate the Erd\"os-R\'enyi random graph G\(n, p\). I.e., a graph with n vertexes where
 each possible edge appears with probability p. This implementation is from Efficient Generation
 of Large Random Networks \(see batagelj-generation-2005 in doab\)."))

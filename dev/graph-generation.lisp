@@ -1,8 +1,8 @@
 (in-package metabang.graph)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(generate-Gnp
-            generate-Gnm
+  (export '(generate-gnp
+            generate-gnm
             generate-undirected-graph-via-assortativity-matrix
             generate-undirected-graph-via-vertex-probabilities
             generate-multi-group-graph-fixed
@@ -60,16 +60,16 @@
 
 
 ;;; ---------------------------------------------------------------------------
-;;; generate-Gnp
+;;; generate-gnp
 ;;; ---------------------------------------------------------------------------
 
-(defmethod generate-Gnp (generator (graph-class symbol) n p &key (label 'identity))
-  (generate-Gnp
+(defmethod generate-gnp (generator (graph-class symbol) n p &key (label 'identity))
+  (generate-gnp
    generator (make-instance graph-class) n p :label label))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod generate-Gnp (generator (graph basic-graph) n p &key (label 'identity))
+(defmethod generate-gnp (generator (graph basic-graph) n p &key (label 'identity))
   (let ((v 1)
         (w -1)
         (log-1-p (log (- 1 p))))
@@ -89,16 +89,16 @@
     graph))
 
 ;;; ---------------------------------------------------------------------------
-;;; generate-Gnm
+;;; generate-gnm
 ;;; ---------------------------------------------------------------------------
 
-(defmethod generate-Gnm (generator (graph-class symbol) n p &key (label 'identity))
-  (generate-Gnm
+(defmethod generate-gnm (generator (graph-class symbol) n p &key (label 'identity))
+  (generate-gnm
    generator (make-instance graph-class) n p :label label))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod generate-Gnm (generator (graph basic-graph) n m &key (label 'identity))
+(defmethod generate-gnm (generator (graph basic-graph) n m &key (label 'identity))
   (let ((max-edge-index (1- (combination-count n 2))))
     (assert (<= m max-edge-index))
     #+Ignore

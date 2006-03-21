@@ -198,7 +198,7 @@ something is putting something on the vertexes plist's
 
 (defmethod print-object ((graph basic-graph) stream)
   (print-unreadable-object (graph stream :type t :identity t)
-    (format stream "~A" (size graph))))
+    (format stream "[~A,~A]" (size graph) (edge-count graph))))
 
 
 ;;; ---------------------------------------------------------------------------

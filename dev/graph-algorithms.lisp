@@ -4,7 +4,7 @@
 ;;;
 ;;; ---------------------------------------------------------------------------
 
-(defstruct (vertex-datum (:conc-name "NODE-") (:type list))
+(defstruct (vertex-datum (:conc-name node-) (:type list))
   (color nil)
   (depth most-positive-fixnum)
   (parent nil))

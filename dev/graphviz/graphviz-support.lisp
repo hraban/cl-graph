@@ -87,9 +87,11 @@ This file contains the stuff that does not depend on cl-graphviz.
         (iterate-vertexes 
          g
          (lambda (v)
+	   ;(spy v)
            (iterate-edges
             v
             (lambda (e)
+	      ;(spy e (undirected-edge-p e) (item-at-1 edges e))
               (when (and (undirected-edge-p e)
                          (not (item-at-1 edges e)))
                 (setf (item-at-1 edges e) t)
