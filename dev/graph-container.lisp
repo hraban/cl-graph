@@ -3,10 +3,6 @@
 
 $Id: graph-container.lisp,v 1.12 2005/07/20 20:39:09 moody Exp $
 
-Copyright 1992 - 2003 Experimental Knowledge Systems Lab, 
-University of Massachusetts Amherst MA, 01003-4610
-Professor Paul Cohen, Director
-
 Author: Gary King
 
 DISCUSSION
@@ -63,11 +59,6 @@ DISCUSSION
   (:default-initargs 
     :vertex-edges-container-class 'vector-container)
   (:documentation "A graph container vertex keeps track of its edges in the the vertex-edges slot. The storage for this defaults to a vector-container but can be changed using the vertex-edges-container-class initarg."))
-
-;;; ---------------------------------------------------------------------------
-
-#+COPYING 
-(defcopy-methods graph-container-vertex :copy-all t)
 
 ;;; ---------------------------------------------------------------------------
 

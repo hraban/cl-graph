@@ -74,3 +74,8 @@ instructions."))
                         ((:module "graphviz"
                                   :components
                                   ((:file "graphviz-support-optional")))))))
+
+(asdf:defsystem-connection cl-graph-and-metacopy
+  :requires (cl-graph metacopy)
+  :components ((:module "dev"
+                        :components ((:file "copying")))))
