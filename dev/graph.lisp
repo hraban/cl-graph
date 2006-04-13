@@ -87,11 +87,6 @@ something is putting something on the vertexes plist's
 
 ;;; ---------------------------------------------------------------------------
 
-#+COPYING
-(defcopy-methods basic-vertex :copy-all t)
-
-;;; ---------------------------------------------------------------------------
-
 (defmethod initialize-instance :after ((object basic-vertex) &key graph vertex-id)
   (when (and graph (not vertex-id))
     (setf (slot-value object 'vertex-id)
@@ -116,7 +111,6 @@ something is putting something on the vertexes plist's
    (color nil ia "The `color` is used by some algorithms for bookkeeping. [?? Should probably be in a mixin]"))
   (:export-p t)
   (:export-slots edge-id element tag color)
-  #+COPYING :copy-slots
   (:make-load-form-p t)
   (:documentation "This is the root class for all edges in CL-Graph."))
 
@@ -136,15 +130,14 @@ something is putting something on the vertexes plist's
 
 ;;; ---------------------------------------------------------------------------
 
-(defclass* directed-edge-mixin (#+COPYING copyable-mixin) ()
+(defclass* directed-edge-mixin () ()
   (:export-p t)
   (:documentation "This mixin class is used to indicate that an edge is directed."))
 
 ;;; ---------------------------------------------------------------------------
 
-(defclass* weighted-edge-mixin (#+COPYING copyable-mixin)
+(defclass* weighted-edge-mixin (#)
   ((weight 1d0 ia "The value of the weight of this edge. Defaults to 1.0d0"))
-  #+COPYING :copy-slots
   :export-slots
   (:export-p t)
   (:documentation "This mixin class adds a `weight` slot to an edge."))
@@ -155,7 +148,7 @@ something is putting something on the vertexes plist's
 
 ;;; ---------------------------------------------------------------------------
 
-(defclass* basic-graph (#+COPYING copyable-mixin)
+(defclass* basic-graph ()
   ((graph-vertexes :unbound ir)
    (graph-edges :unbound ir)
    (largest-vertex-id 0 r)

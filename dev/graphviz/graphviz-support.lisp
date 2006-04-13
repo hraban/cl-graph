@@ -4,10 +4,6 @@
 
 $Id: graphviz-support.lisp,v 1.7 2005/06/21 20:51:51 moody Exp $
 
-Copyright 1992 - 2005 Experimental Knowledge Systems Lab, 
-University of Massachusetts Amherst MA, 01003-4610
-Professor Paul Cohen, Director
-
 Author: Gary King, Levente Mészáros, Attila Lendvai
 
 DISCUSSION
@@ -23,7 +19,7 @@ This file contains the stuff that does not depend on cl-graphviz.
 ; For more information about DOT file format, search the web for "DOTTY" and 
 ; "GRAPHVIZ".
 ;
-(defmethod graph->dot ((g basic-graph) (stream stream)
+ graph->dot ((g basic-graph) (stream stream)
                        &key 
                        (graph-formatter 'graph->dot-properties)
                        (vertex-key 'vertex-id)
