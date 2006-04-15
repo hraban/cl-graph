@@ -19,7 +19,7 @@ This file contains the stuff that does not depend on cl-graphviz.
 ; For more information about DOT file format, search the web for "DOTTY" and 
 ; "GRAPHVIZ".
 ;
- graph->dot ((g basic-graph) (stream stream)
+(defmethod graph->dot ((g basic-graph) (stream stream)
                        &key 
                        (graph-formatter 'graph->dot-properties)
                        (vertex-key 'vertex-id)

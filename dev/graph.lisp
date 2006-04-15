@@ -136,7 +136,7 @@ something is putting something on the vertexes plist's
 
 ;;; ---------------------------------------------------------------------------
 
-(defclass* weighted-edge-mixin (#)
+(defclass* weighted-edge-mixin ()
   ((weight 1d0 ia "The value of the weight of this edge. Defaults to 1.0d0"))
   :export-slots
   (:export-p t)
