@@ -5,13 +5,13 @@
 |#
 
 (in-package :common-lisp-user)
-(defpackage "ASDF-CL-GRAPH" (:use #:cl #:asdf))
-(in-package "ASDF-CL-GRAPH")
+(defpackage #:asdf-cl-graph (:use #:cl #:asdf))
+(in-package #:asdf-cl-graph)
 
 (unless (find-system 'asdf-system-connections nil)
  (when (find-package 'asdf-install)
    (print "Trying to install asdf-system-connections with ASDF-Install...")
-   (funcall (intern "INSTALL" "ASDF-INSTALL") 'asdf-system-connections)))
+   (funcall (intern (symbol-name :install) :asdf-install) 'asdf-system-connections)))
 ;; give up with a useful (?) error message
 (unless (find-system 'asdf-system-connections nil)
   (error "The CL-Graph system requires ASDF-SYSTEM-CONNECTIONS. See 
