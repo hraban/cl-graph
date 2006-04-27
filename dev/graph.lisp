@@ -1065,7 +1065,7 @@ nil gathers the entire closure(s)."
 ;;; ---------------------------------------------------------------------------
 
 (defmethod edge-count ((graph basic-graph))
-  (length (edges graph)))
+  (count-using #'iterate-edges nil graph))
 
 ;;; ---------------------------------------------------------------------------
 

@@ -208,7 +208,6 @@ DISCUSSION
 
 ;;; ---------------------------------------------------------------------------
 
-
 (defmethod find-edge ((graph graph-container) (edge graph-container-edge)
                       &optional error-if-not-found?)
   (find-edge-between-vertexes
@@ -312,7 +311,8 @@ DISCUSSION
   
   (values nil))
 
+;;; ---------------------------------------------------------------------------
 
-;;; ***************************************************************************
-;;; *                              End of File                                *
-;;; ***************************************************************************
+(defmethod edge-count ((graph graph-container))
+  (size (graph-edges graph)))
+
