@@ -19,3 +19,9 @@
 (metacopy:defcopy-methods graph-container-edge 
   :copy-all t)
 
+(defmethod generate-directed-free-tree ((graph basic-graph) (root basic-vertex))
+  (let ((new-graph (metacopy:copy-thing graph)))
+    (empty! new-graph)
+    (nilf (contains-undirected-edge-p new-graph))
+    (neighbors-to-children new-graph root)
+    (values new-graph)))

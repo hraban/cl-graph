@@ -222,18 +222,6 @@ something is putting something on the vertexes plist's
                                 &allow-other-keys)
   (remf args :edge-class)
   (remf args :edge-type)
-  
-  #| I removed 'em, gwk
-  
-  ;;; I added these - jjm
-  (remf args :vertex-test)
-  (remf args :vertex-key)
-  (remf args :edge-key)
-  (remf args :edge-test)
-  (remf args :force-new?)
-  
-|#  
-  
   (assert (or (null edge-type)
               (eq edge-type :directed)
               (eq edge-type :undirected)) nil
@@ -255,7 +243,6 @@ something is putting something on the vertexes plist's
              (undirected-edge-class graph))
          :graph graph
          :vertex-1 vertex-1 :vertex-2 vertex-2 args))
-
 
 ;;; ---------------------------------------------------------------------------
 
@@ -804,16 +791,6 @@ something is putting something on the vertexes plist's
 
 ;;; ---------------------------------------------------------------------------
                                 
-#+COPYING
-(defmethod generate-directed-free-tree ((graph basic-graph) (root basic-vertex))
-  (let ((new-graph (copy-top-level graph)))
-    (empty! new-graph)
-    (nilf (contains-undirected-edge-p new-graph))
-    (neighbors-to-children new-graph root)
-    (values new-graph)))
-
-;;; ---------------------------------------------------------------------------
-
 (defmethod generate-directed-free-tree ((graph basic-graph) root)
   (generate-directed-free-tree graph (find-vertex graph root)))
 

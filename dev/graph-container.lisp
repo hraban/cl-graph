@@ -20,7 +20,7 @@ DISCUSSION
                             initial-contents-mixin
                             basic-graph
                             container-uses-nodes-mixin)
-  ()
+  ((vertex-pair->edge (make-container 'simple-associative-container) r))
   (:default-initargs
     :vertex-class 'graph-container-vertex
     :directed-edge-class 'graph-container-directed-edge
