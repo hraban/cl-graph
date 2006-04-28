@@ -1,4 +1,4 @@
-(in-package metabang.graph)
+(in-package cl-graph-test)
 
 #|
 (let ((g (make-container 'graph-container))) 
@@ -10,16 +10,15 @@
     (inspect g)))
 |#
 
-(deftestsuite test-graph () ())
-
+(deftestsuite cl-graph-test () ())
 
 (deftestsuite test-test-vertex () ())
 
 (addtest (test-test-vertex)
   test-1
-  (bind ((x (float 2.1d0))
-         (y (float 2.1d0))
-         (g (make-container 'graph-container)))
+  (metatilities:bind ((x (float 2.1d0))
+                     (y (float 2.1d0))
+                     (g (make-container 'graph-container)))
     (add-vertex g (+ x y))
     (add-vertex g (+ x y))
     
@@ -40,7 +39,7 @@
 ;;; should do this for each _kind_ of graph
 ;;; ---------------------------------------------------------------------------
 
-(deftestsuite test-basic-graph-properties (test-graph)
+(deftestsuite test-basic-graph-properties (cl-graph-test)
   ((graph-undirected (make-container 'graph-container :default-edge-type :undirected))
    (graph-directed (make-container 'graph-container :default-edge-type :directed)))
   :setup ((loop for v in '(a b c d e) do
@@ -71,7 +70,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-(deftestsuite test-graph-traversal (test-graph)
+(deftestsuite cl-graph-test-traversal (cl-graph-test)
   ((g (make-container 'graph-container)))
   :setup (loop for (src dst) in '((a b) (a c) (a d) (b e) 
                                   (b f) (d g) (d h) (h i)
@@ -91,7 +90,7 @@ a - b - e
 
 |#
 
-(addtest (test-graph-traversal)
+(addtest (cl-graph-test-traversal)
   (let ((result nil))
     (traverse-elements
      g :depth (lambda (v) (push (element v) result)))
@@ -100,7 +99,7 @@ a - b - e
 
 ;;; ---------------------------------------------------------------------------
 
-(addtest (test-graph-traversal)
+(addtest (cl-graph-test-traversal)
   (let ((result nil))
     (traverse-elements
      g :breadth (lambda (v) (push (element v) result)))

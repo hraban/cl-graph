@@ -1,4 +1,4 @@
-(in-package cl-graph)
+(in-package cl-graph-test)
 
 (deftestsuite test-connected-components ()
   ())
@@ -113,6 +113,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
+#+Ignore
 (let ((graph (make-container 'graph-container)))
   (loop for (a b) in '((r s) (r v) (s w) (t u) (t w) (t x) 
                        (u y) (w x) (x y)) do

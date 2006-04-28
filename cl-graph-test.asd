@@ -17,23 +17,32 @@
 
   :components ((:module "unit-tests"
                         :components ((:file "package")
-                                     (:file "test*" :depends-on ("package"))))
+                                     (:file "test-graph" :depends-on ("package"))
+                                     (:file "test-graph-container" :depends-on ("test-graph"))
+                                     (:file "test-connected-components" :depends-on ("test-graph"))
+                                     (:file "test-graph-metrics" :depends-on ("test-graph"))
+                                     (:file "test-graph-algorithms" :depends-on ("test-graph"))
+                                     ))
                
                (:module "dev"
                         :components ((:static-file "notes.text"))))
   
-  :in-order-to ((test-op (load-op moptilities-test)))
-  
-  :perform (test-op :after (op c)
-                    (describe
-                     (funcall 
-                      (intern (symbol-name '#:run-tests) '#:lift) 
-                      :suite (intern (symbol-name '#:cl-graph-test) '#:cl-graph-test))))
+  :in-order-to ((test-op (load-op cl-graph-test)))
   :depends-on (cl-graph lift))
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod operation-done-p 
-           ((o test-op)
-            (c (eql (find-system 'moptilities-test))))
+(defmethod perform :after ((op test-op ) (c (eql (find-system 'cl-graph-test))))
+  (describe
+   (funcall 
+    (intern (symbol-name '#:run-tests) '#:lift) 
+    :suite (intern (symbol-name '#:cl-graph-test) '#:cl-graph-test))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod perform :after ((o load-op) (c (eql (find-system 'cl-graph-test))))
+  )
+
+(defmethod operation-done-p ((o test-op) (c (eql (find-system 'cl-graph-test))))
+  ;; testing is never done...
   (values nil))

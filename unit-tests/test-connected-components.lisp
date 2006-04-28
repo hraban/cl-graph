@@ -1,4 +1,4 @@
-(in-package metabang.graph)
+(in-package cl-graph-test)
 
 (deftestsuite test-connected-component ()
   ())
