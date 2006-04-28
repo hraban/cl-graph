@@ -1,3 +1,10 @@
+optimize : find-edge-between-vertexes-if
+
+Should have delete-item-at-1
+
+delete-edge : equal or eql
+
+
 #|
 (in-package cl-graph)
 

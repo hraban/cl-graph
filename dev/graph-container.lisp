@@ -20,7 +20,8 @@ DISCUSSION
                             initial-contents-mixin
                             basic-graph
                             container-uses-nodes-mixin)
-  ((vertex-pair->edge (make-container 'simple-associative-container) r))
+  ((vertex-pair->edge (make-container 'simple-associative-container
+                                      :test #'equal) r))
   (:default-initargs
     :vertex-class 'graph-container-vertex
     :directed-edge-class 'graph-container-directed-edge
@@ -155,7 +156,8 @@ DISCUSSION
            (add-edge-to-vertex edge vertex-1))
           (t
            (add-edge-to-vertex edge vertex-1)
-           (add-edge-to-vertex edge vertex-2))))
+           (add-edge-to-vertex edge vertex-2)))
+    (push edge (item-at-1 (vertex-pair->edge graph) (cons vertex-1 vertex-2))))
   edge)
 
 ;;; ---------------------------------------------------------------------------
@@ -175,10 +177,14 @@ DISCUSSION
                                        (vertex-1 graph-container-vertex) 
                                        (vertex-2 graph-container-vertex)
                                        &key error-if-not-found?)
-  (declare (ignore error-if-not-found?))
-  (search-for-match (vertex-edges vertex-1)
-                    (lambda (edge)
-                      (eq vertex-2 (other-vertex edge vertex-1)))))
+  (multiple-value-bind (value found?)
+                       (item-at-1 (vertex-pair->edge graph) 
+                                  (cons vertex-1 vertex-2))
+    (when (and error-if-not-found?
+               (not found?))
+      (error 'graph-edge-not-found-error 
+             :vertex-1 vertex-1 :vertex-2 vertex-1))
+    (first value)))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -217,10 +223,24 @@ DISCUSSION
 ;;; ---------------------------------------------------------------------------
 
 (defmethod delete-edge ((graph graph-container) (edge graph-container-edge))
-  (delete-item (vertex-edges (vertex-1 edge)) edge)
-  (delete-item (vertex-edges (vertex-2 edge)) edge)
+  (let ((vertex-1 (vertex-1 edge))
+        (vertex-2 (vertex-2 edge)))
+    (delete-item (vertex-edges vertex-1) edge)
+    (delete-item (vertex-edges vertex-2) edge)
+    (setf (item-at-1 (vertex-pair->edge graph) (cons vertex-1 vertex-2))
+          (delete (cons vertex-1 vertex-2) 
+                  (item-at-1 (vertex-pair->edge graph) (cons vertex-1 vertex-2))
+                  :test #'equal)))
   edge)
 
+;;; ---------------------------------------------------------------------------
+
+(defmethod empty! :after ((graph graph-container))
+  (empty! (vertex-pair->edge graph)))
+
+
+;;; ---------------------------------------------------------------------------
+;;; iteration
 ;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-edges ((graph graph-container) fn)
