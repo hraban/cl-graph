@@ -266,7 +266,7 @@ B--D []
     (:height float)
     (:width float)
     (:margin float)
-    (:fixed-size boolean)
+    (:fixedsize boolean)
     (:label text)
     (:shape (:record :plaintext :ellipse :circle :egg :triangle :box
              :diamond :trapezium :parallelogram :house :hexagon :octagon
