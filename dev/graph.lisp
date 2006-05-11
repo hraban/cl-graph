@@ -14,7 +14,7 @@ something is putting something on the vertexes plist's
 |#
 
 
-(in-package metabang.graph)
+(in-package #:metabang.graph)
 
 ;;; ---------------------------------------------------------------------------
 ;;; classes

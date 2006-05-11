@@ -7,7 +7,7 @@ Author: Gary King, et. al.
 DISCUSSION
 
 |#
-(in-package common-lisp-user)
+(in-package #:common-lisp-user)
 
 (defpackage #:cl-graph
   (:use #:common-lisp #:metatilities #:cl-containers 

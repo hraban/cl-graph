@@ -9,7 +9,7 @@ DISCUSSION
 
 |#
 
-(in-package metabang.graph)
+(in-package #:metabang.graph)
 
 ;;; ---------------------------------------------------------------------------
 ;;; class defs

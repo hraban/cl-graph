@@ -1,4 +1,4 @@
-(in-package metabang.graph)
+(in-package #:metabang.graph)
 
 (defun roots-and-child-function->graph (roots child-function max-depth)
   (let ((g (make-graph 'graph-container)))

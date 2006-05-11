@@ -16,7 +16,7 @@ CtF uses an adj list (vector of edges with lists) or adj matrix (vector with vec
 
 I think I'd like a numeric class and then a object one... maybe someday
 |#
-(in-package metabang.graph)
+(in-package #:metabang.graph)
 
 ;;; ---------------------------------------------------------------------------
 

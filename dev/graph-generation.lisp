@@ -1,4 +1,4 @@
-(in-package metabang.graph)
+(in-package #:metabang.graph)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(generate-gnp

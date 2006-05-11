@@ -1,4 +1,4 @@
-(in-package cl-graph)
+(in-package #:cl-graph)
 
 ;;; make a simple graph
 (let ((g (make-container 'graph-container))) 

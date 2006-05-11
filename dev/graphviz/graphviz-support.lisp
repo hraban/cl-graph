@@ -11,7 +11,7 @@ DISCUSSION
 This file contains the stuff that does not depend on cl-graphviz.
 
 |#
-(in-package metabang.graph)
+(in-package #:metabang.graph)
 
 ;;; ---------------------------------------------------------------------------
 ;

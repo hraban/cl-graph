@@ -9,7 +9,7 @@ Author: Gary King
 DISCUSSION
 
 |#
-(in-package metabang.graph)
+(in-package #:metabang.graph)
 
 
 (defun vertex-degree-counts (g)

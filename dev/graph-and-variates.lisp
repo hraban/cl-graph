@@ -1,4 +1,4 @@
-(in-package cl-user)
+(in-package #:cl-user)
 
 #+Ignore
 (shadowing-import 

@@ -1,4 +1,4 @@
-(in-package cl-graph-test)
+(in-package #:cl-graph-test)
 
 #|
 (let ((g (make-container 'graph-container))) 

@@ -1,4 +1,4 @@
-(in-package cl-graph-test)
+(in-package #:cl-graph-test)
 
 (deftestsuite test-connected-component ()
   ())

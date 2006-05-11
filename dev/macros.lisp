@@ -1,6 +1,6 @@
 ;;;-*- Mode: Lisp; Package: metabang.graph -*-
 
-(in-package metabang.graph)
+(in-package #:metabang.graph)
 
 ;;?? Gary King 2006-01-30: 
 ;;?? Face it, I have no idea why we need this anymore... but i'm sure we do

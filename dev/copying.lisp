@@ -1,4 +1,4 @@
-(in-package cl-graph)
+(in-package #:cl-graph)
 
 (metacopy:defcopy-methods basic-vertex 
   :copy-all t)

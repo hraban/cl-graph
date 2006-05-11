@@ -13,7 +13,7 @@ loaded when cl-graphviz is available.
 
 |#
 
-(in-package metabang.graph)
+(in-package #:metabang.graph)
 
 ;; TODO these are hacks to be removed later,
 ;; the functionality should be provided by graph itself
