@@ -61,7 +61,7 @@ This file contains the stuff that does not depend on cl-graphviz.
              (princ " [" stream)
              (when (and directed? directed-edge-tag)
                (princ directed-edge-tag stream))
-             (when edge-key
+             (when edge-labeler
                (princ "label=\"" stream)
                (funcall edge-labeler e stream)
                (princ "\"," stream))
