@@ -228,9 +228,9 @@ DISCUSSION
     (delete-item (vertex-edges vertex-1) edge)
     (delete-item (vertex-edges vertex-2) edge)
     (setf (item-at-1 (vertex-pair->edge graph) (cons vertex-1 vertex-2))
-          (delete (cons vertex-1 vertex-2) 
+          (delete edge
                   (item-at-1 (vertex-pair->edge graph) (cons vertex-1 vertex-2))
-                  :test #'equal)))
+                  :test #'eq)))
   edge)
 
 ;;; ---------------------------------------------------------------------------
