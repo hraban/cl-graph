@@ -192,12 +192,15 @@ DISCUSSION
                                           (vertex-1 graph-container-vertex) 
                                           (vertex-2 graph-container-vertex)
                                           fn
-                                          &key error-if-not-found?)
-  (declare (ignore error-if-not-found?))
-  (search-for-match (vertex-edges vertex-1)
-                    (lambda (edge)
-                      (and (eq vertex-2 (other-vertex edge vertex-1))
-                           (funcall fn edge)))))
+                                          &key error-if-not-found?) 
+  (let ((it (search-for-match (vertex-edges vertex-1)
+                              (lambda (edge)
+                                (and (eq vertex-2 (other-vertex edge vertex-1))
+                                     (funcall fn edge))))))
+    (when (and error-if-not-found? (not it))
+      (error 'graph-edge-not-found-error 
+             :vertex-1 vertex-1 :vertex-2 vertex-1))
+    it))    
 
 ;;; ---------------------------------------------------------------------------
 
@@ -208,9 +211,10 @@ DISCUSSION
                                           &key error-if-not-found?)
   (bind ((v1 (find-vertex graph value-1 error-if-not-found?))
          (v2 (find-vertex graph value-2 error-if-not-found?)))
-    (find-edge-between-vertexes-if 
-     graph v1 v2 fn 
-     :error-if-not-found? error-if-not-found?)))
+    (aif (and v1 v2 (find-edge-between-vertexes-if graph v1 v2 fn))
+         it
+         (when error-if-not-found?
+           (error 'graph-edge-not-found-error :vertex-1 v1 :vertex-2 v2)))))
 
 ;;; ---------------------------------------------------------------------------
 
