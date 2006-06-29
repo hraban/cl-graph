@@ -14,7 +14,7 @@
 ;;; API
 ;;; ---------------------------------------------------------------------------
 
-(defgeneric make-graph (graph-type &key)
+(defgeneric make-graph (graph-type &key &allow-other-keys)
   (:documentation "Create a new graph of type `graph-type'. Graph type can be 
 a symbol naming a sub-class of basic-graph or a list. If it is a list of symbols naming
 different classes. If graph-type is a list, then a class which has all of the listed 
@@ -36,7 +36,7 @@ be created as if with a call to make-instance."))
 
 (defgeneric add-edge-between-vertexes (graph value-or-vertex-1 value-or-vertex-2
                                               &rest args &key if-duplicate-do
-                                              edge-type)
+                                              edge-type &allow-other-keys)
   (:documentation "Adds an edge between two vertexes and returns it.  
 If force-new? is true, 
 the edge is added even if one already exists. 
@@ -67,7 +67,7 @@ be called with the previous edge."))
 
 ;;; ---------------------------------------------------------------------------
 
-(defgeneric add-vertex (graph value-or-vertex &key if-duplicate-do)
+(defgeneric add-vertex (graph value-or-vertex &key if-duplicate-do &allow-other-keys)
   (:documentation  "Adds a vertex to a graph. If called with a vertex, then this vertex is added. If called with a value, then a new vertex is created to hold the value. If-duplicate-do can be one of :ignore, :force, :replace, :replace-value or a function. The default is :ignore."))
 
 ;;; ---------------------------------------------------------------------------
