@@ -481,6 +481,11 @@ something is putting something on the vertexes plist's
   (delete-item (graph-edges graph) edge)
   edge)
 
+
+(defmethod delete-all-edges :after ((graph basic-graph))
+  (empty! (graph-edges graph))
+  graph)
+
 ;;; ---------------------------------------------------------------------------
 
 (defmethod delete-vertex ((graph basic-graph) value-or-vertex)

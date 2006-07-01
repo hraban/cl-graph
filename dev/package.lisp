@@ -96,7 +96,8 @@ DISCUSSION
    
    #:add-edge                      ; graph edge
    #:delete-edge                   ; graph edge
-   
+   #:delete-all-edges
+
    #:add-vertex                    ; graph { value | vertex }
    #:delete-vertex                 ; graph { value | vertex }
    #:find-vertex                   ; graph { value | vertex }

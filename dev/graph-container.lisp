@@ -237,6 +237,14 @@ DISCUSSION
                   :test #'eq)))
   edge)
 
+(defmethod delete-all-edges ((graph graph-container))
+  (iterate-vertexes 
+   graph
+   (lambda (vertex)
+     (empty! (vertex-edges vertex))))
+  (empty! (vertex-pair->edge graph))
+  graph)
+
 ;;; ---------------------------------------------------------------------------
 
 (defmethod empty! :after ((graph graph-container))
