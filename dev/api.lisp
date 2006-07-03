@@ -197,7 +197,9 @@ rooted at root."))
 
 ;;; ---------------------------------------------------------------------------
 
-(defgeneric make-filtered-graph (old-graph test-fn &optional graph-completion-method depth)
+(defgeneric make-filtered-graph (old-graph test-fn &key
+					   graph-completion-method depth
+					   new-graph)
   (:documentation "Takes a GRAPH and a TEST-FN (a single argument function
 returning NIL or non-NIL), and filters the graph nodes according to 
 the test-fn (those that return non-NIL are accepted), returning 
@@ -658,7 +660,7 @@ and any other initialization arguments that make sense for the vertex class."))
 (defgeneric complete-links (new-graph old-graph)
   (:documentation "Add edges between vertexes in the new-graph for which the matching  vertexes in the old-graph have edges. The vertex matching is done using `find-vertex`."))
 
-(defgeneric subgraph-containing (graph vertex &optional depth)
+(defgeneric subgraph-containing (graph vertex &key)
   (:documentation "Returns a new graph that is a subset of `graph` that contains `vertex` and all of the other vertexes that can be reached from vertex by paths of less than or equal of length `depth`. If depth is not specified, then the entire sub-graph reachable from vertex will be returned. [?? Edge weights are always assumed to be one.]"))
 
 ;;; ---------------------------------------------------------------------------

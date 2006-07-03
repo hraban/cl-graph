@@ -1006,43 +1006,43 @@ nil gathers the entire closure(s)."
 
 (defmethod make-filtered-graph ((old-graph basic-graph)
                                 test-fn
-                                &optional
+                                &key
                                 (graph-completion-method nil)
-                                (depth nil))
-  (let ((new-graph 
-         (copy-template old-graph)))
-    (ecase graph-completion-method
-      ((nil 
-        :complete-links)
-       (iterate-vertexes old-graph
-                         (lambda (vertex)
-                           (when (funcall test-fn vertex)
-                             (add-vertex new-graph (value vertex))))))
-      ((:complete-closure-nodes-only 
-        :complete-closure-with-links)
-       (let* ((old-graph-vertexes  (collect-items old-graph :filter test-fn))
-              (closure-vertexes 
-               (get-transitive-closure old-graph-vertexes depth)))
-         (dolist (vertex closure-vertexes)
-           (add-vertex new-graph (copy-template vertex))))))
-    
-    (ecase graph-completion-method
+                                (depth nil)
+				(new-graph 
+				 (copy-template old-graph)))
+  (ecase graph-completion-method
+    ((nil 
+      :complete-links)
+     (iterate-vertexes old-graph
+		       (lambda (vertex)
+			 (when (funcall test-fn vertex)
+			   (add-vertex new-graph (value vertex))))))
+    ((:complete-closure-nodes-only 
+      :complete-closure-with-links)
+     (let* ((old-graph-vertexes  (collect-items old-graph :filter test-fn))
+	    (closure-vertexes 
+	     (get-transitive-closure old-graph-vertexes depth)))
+       (dolist (vertex closure-vertexes)
+	 (add-vertex new-graph (copy-template vertex))))))
+  (ecase graph-completion-method
       ((nil :complete-closure-nodes-only) nil)
       ((:complete-links
         :complete-closure-with-links)
        (complete-links new-graph old-graph)))
-    
-    new-graph))
+  new-graph)
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod subgraph-containing ((graph basic-graph) (vertex basic-vertex)
-                                &optional (depth nil))
-  (make-filtered-graph graph
-                       #'(lambda (v)
-                           (equal v vertex))
-                       :complete-closure-with-links
-                       depth))
+                                &rest args &key (depth nil) (new-graph nil))
+  (declare (ignore depth new-graph))
+  (apply #'make-filtered-graph
+	 graph
+	 #'(lambda (v)
+	     (equal v vertex))
+	 :graph-completion-method :complete-closure-with-links
+	 args))
 
 ;;; ---------------------------------------------------------------------------
 
