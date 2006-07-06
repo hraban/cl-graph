@@ -250,6 +250,7 @@ B--D []
     (:nodesep float)
     (:ranksep float)
     (:ordering (:out))
+    (:overlap :text)
     (:rankdir ("LR" "RL" "BT"))
     (:pagedir text)
     (:rank (:same :min :max))
@@ -259,14 +260,15 @@ B--D []
     (:mclimit float)
     (:layers text)
     (:color text)
-    (:bgcolor text)))
+    (:bgcolor text)
+    (:fontname text)))
 
 (defparameter *dot-vertex-attributes*
   '((:pos coordinate)
     (:height float)
     (:width float)
     (:margin float)
-    (:fixedsize boolean)
+    (:fixed-size boolean)
     (:label text)
     (:shape (:record :plaintext :ellipse :circle :egg :triangle :box
              :diamond :trapezium :parallelogram :house :hexagon :octagon
@@ -278,7 +280,8 @@ B--D []
     (:fillcolor text)
     (:style (:filled :solid :dashed :dotted :bold :invis))
     (:layer text)
-    (:url text)))
+    (:url text)
+    (:peripheries integer)))
 
 (defparameter *dot-edge-attributes*
   '((:pos spline)
