@@ -250,7 +250,7 @@ B--D []
     (:nodesep float)
     (:ranksep float)
     (:ordering (:out))
-    (:overlap :text)
+    (:overlap text)
     (:rankdir ("LR" "RL" "BT"))
     (:pagedir text)
     (:rank (:same :min :max))
