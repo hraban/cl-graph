@@ -1,4 +1,56 @@
+The only reasons we rely on cl-mathstats are 
+
+;    /Users/gwking/.fasls/allegro-8.0m-macosx-x86/Users/gwking/darcs/cl-graph/dev/graphviz/graphviz-support.fasl
+Warning: While compiling these undefined functions were referenced:
+         cl-graph::matrix-trace from position 7424 in
+           /Users/gwking/darcs/cl-graph/dev/graph-metrics.lisp
+         cl-graph::matrix-multiply from position 7424 in
+           /Users/gwking/darcs/cl-graph/dev/graph-metrics.lisp, 7827 in
+           /Users/gwking/darcs/cl-graph/dev/graph-metrics.lisp
+         cl-graph::normalize-matrix from position 7424 in
+           /Users/gwking/darcs/cl-graph/dev/graph-metrics.lisp
+
+;;; move to l0-arrays? or metatilities?
+         cl-graph:: sum-of-array-elements from position 7424 in
+           /Users/gwking/darcs/cl-graph/dev/graph-metrics.lisp, 7827 in
+           /Users/gwking/darcs/cl-graph/dev/graph-metrics.lisp
+         cl-graph::combination-count from position 5742 in
+           /Users/gwking/darcs/cl-graph/dev/graph-metrics.lisp
+
+some other things might be +e+, degrees->radians and radians->degrees,
+  combination-count, permutation-count, sum-of-array-elements
+
+
+- Use samep in samep for associative containers
+
 optimize : find-edge-between-vertexes-if
+(defmethod find-edge-between-vertexes-if ((graph graph-container)
+                                          (vertex-1 graph-container-vertex)
+                                          (value-2 t)
+                                          fn
+                                          &key error-if-not-found?)
+  (let ((v2 (find-vertex graph value-2 error-if-not-found?)))
+    (when v2
+      (find-edge-between-vertexes-if 
+       graph vertex-1 v2 fn 
+       :error-if-not-found? error-if-not-found?))))
+
+;;; ---------------------------------------------------------------------------
+
+(defmethod find-edge-between-vertexes-if ((graph graph-container)
+                                          (value-1 t)
+                                          (vertex-2 graph-container-vertex)
+                                          fn
+                                          &key error-if-not-found?)
+  (let ((v1 (find-vertex graph value-1 error-if-not-found?)))
+    (when v1
+      (find-edge-between-vertexes-if 
+       graph v1 vertex-2 fn 
+       :error-if-not-found? error-if-not-found?))))
+
+
+Hmm, should probably write a macro that created all four method [ (t t), (t vertex), (vertex t) and (vertex vertex)] magically...
+
 
 Should have delete-item-at-1
 
