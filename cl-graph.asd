@@ -55,12 +55,12 @@ instructions."))
                     (describe 
 		     (funcall (intern (symbol-name '#:run-tests) :lift) 
 			      :suite '#:cl-graph-test)))
-  :depends-on (metatilities 
-	       cl-containers
-	       metabang-bind
-	       cl-mathstats
+  :depends-on (:metatilities 
+	       :cl-containers
+	       :metabang-bind
+	       :cl-mathstats
 	       ;; makes ASDF-Install get this automatically
-	       asdf-system-connections
+	       :asdf-system-connections
 	       ))
 
 (defmethod operation-done-p 
