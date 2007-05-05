@@ -4,7 +4,7 @@
 
 $Id: graphviz-support.lisp,v 1.7 2005/06/21 20:51:51 moody Exp $
 
-Author: Gary King, Levente MÈsz·ros, Attila Lendvai
+Author: Gary King, Levente M√©sz√°ros, Attila Lendvai
 
 DISCUSSION
 
