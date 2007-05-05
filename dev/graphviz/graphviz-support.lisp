@@ -20,14 +20,14 @@ This file contains the stuff that does not depend on cl-graphviz.
 ; "GRAPHVIZ".
 ;
 (defmethod graph->dot ((g basic-graph) (stream stream)
-                       &key 
+                       &key
                        (graph-formatter 'graph->dot-properties)
                        (vertex-key 'vertex-id)
                        (vertex-labeler nil)
                        (vertex-formatter 'vertex->dot)
-                       (edge-key nil)
                        (edge-labeler 'princ) 
-                       (edge-formatter 'edge->dot))
+                       (edge-formatter 'edge->dot)
+                       &allow-other-keys)
   (format stream "~A G {~%graph " (if (contains-undirected-edge-p g) "graph" "digraph"))
   (format stream "[")
   (funcall graph-formatter g stream)

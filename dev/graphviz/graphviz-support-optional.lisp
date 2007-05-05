@@ -58,7 +58,7 @@ loaded when cl-graphviz is available.
                                 (to-vertex (find-vertex-by-id g (graphviz:node-name to)))
                                 (real-edge (find-edge-between-vertexes g from-vertex to-vertex))
                                 (bezier-points '()))
-                           (graphviz:edge-iterate-beziers
+                           (graphviz:iterate-edge-beziers
                             edge
                             (lambda (bezier)
                               ;;(format t "  Bezier: ~a~%"
