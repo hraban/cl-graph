@@ -635,18 +635,6 @@ something is putting something on the vertexes plist's
   (when error-if-not-found?
     (error 'graph-vertex-not-found-in-edge-error :vertex value :edge edge)))
 
-;;; ---------------------------------------------------------------------------
-
-(defmethod search-for-vertex ((graph basic-graph) (value t) 
-                              &key (key (vertex-key graph)) (test 'equal)
-                              (error-if-not-found? t))
-  (aif (search-for-node graph value :test test :key key)
-       it
-       (when error-if-not-found?
-         (error "~S not found in ~A using key ~S and test ~S" value graph key 
-                test))))
-
-;;; ---------------------------------------------------------------------------
 
 (defmethod search-for-vertex ((graph basic-graph) (vertex basic-vertex)
                               &key (key (vertex-key graph)) (test 'equal)
@@ -656,8 +644,6 @@ something is putting something on the vertexes plist's
        (when error-if-not-found?
          (error "~A not found in ~A" vertex graph))))
 
-;;; ---------------------------------------------------------------------------
-;; TODO !!! dispatch is the same as the second method above
 (defmethod search-for-vertex ((graph basic-graph) (vertex t)
                               &key (key (vertex-key graph)) (test 'equal)
                               (error-if-not-found? t))
@@ -665,8 +651,6 @@ something is putting something on the vertexes plist's
        it
        (when error-if-not-found?
          (error "~A not found in ~A" vertex graph))))
-
-;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-elements ((graph basic-graph) fn)
    (iterate-elements (graph-vertexes graph) 
