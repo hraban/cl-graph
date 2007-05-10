@@ -264,7 +264,6 @@ or the URL 'http://arxiv.org/abs/cond-mat/0209450'."))
                        vertex-key
                        vertex-labeler
                        vertex-formatter
-                       edge-key
                        edge-labeler 
                        edge-formatter)
   (:documentation 
