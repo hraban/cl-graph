@@ -2,8 +2,6 @@
 
 #| simple-header
 
-$Id: graphviz-support.lisp,v 1.7 2005/06/21 20:51:51 moody Exp $
-
 Author: Gary King, Levente Mészáros, Attila Lendvai
 
 DISCUSSION
@@ -28,7 +26,8 @@ This file contains the stuff that does not depend on cl-graphviz.
                        (edge-labeler 'princ) 
                        (edge-formatter 'edge->dot)
                        &allow-other-keys)
-  (format stream "~A G {~%graph " (if (contains-undirected-edge-p g) "graph" "digraph"))
+  (format stream "~A G {~%graph " 
+	  (if (contains-undirected-edge-p g) "graph" "digraph"))
   (format stream "[")
   (funcall graph-formatter g stream)
   (format stream "];")
@@ -362,7 +361,8 @@ B--D []
           (* 72 it)))
       (defmethod (setf ,actual-name) (value (thing ,type))
         "Set the attribute in pixels assuming 72 dpi"
-        (setf (dot-attribute-value ,attr thing) (coerce (/ value 72) 'double-float))))))
+        (setf (dot-attribute-value ,attr thing)
+	      (coerce (/ value 72) 'double-float))))))
 
 (defpixel-inch-accessors width :width dot-vertex-mixin)
 (defpixel-inch-accessors height :height dot-vertex-mixin)
@@ -499,6 +499,7 @@ B--D []
 the program in *dot-path*."
   (let ((dot-string (graph->dot g nil))
         (dot-type (concatenate 'string "-T" (string-downcase (symbol-name type)))))
+    (declare (ignorable dot-string dot-type file-name))
     #+lispworks (with-open-stream
                     (s (sys:open-pipe (concatenate 'string *dot-path* " -Tpng -o" file-name)
                                       :direction :input))
