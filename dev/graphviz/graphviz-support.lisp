@@ -497,9 +497,10 @@ B--D []
 (defmethod graph->dot-external ((g basic-graph) file-name &key (type :ps))
   "Generate an external represenation of a graph to a file, by running
 the program in *dot-path*."
+  (declare (ignorable file-name))
   (let ((dot-string (graph->dot g nil))
         (dot-type (concatenate 'string "-T" (string-downcase (symbol-name type)))))
-    (declare (ignorable dot-string dot-type file-name))
+    (declare (ignorable dot-string dot-type))
     #+lispworks (with-open-stream
                     (s (sys:open-pipe (concatenate 'string *dot-path* " -Tpng -o" file-name)
                                       :direction :input))
