@@ -622,7 +622,14 @@ something is putting something on the vertexes plist's
        (when error-if-not-found?
          (error 'graph-vertex-not-found-error :vertex value :graph graph))))
 
-;;; ---------------------------------------------------------------------------
+(defmethod find-vertex ((graph basic-graph) (vertex basic-vertex)
+                        &optional (error-if-not-found? t))
+  (cond ((eq graph (graph vertex))
+	 vertex)
+	(t
+	 (when error-if-not-found?
+	   (error 'graph-vertex-not-found-error 
+		  :vertex vertex :graph graph)))))
 
 (defmethod find-vertex ((edge basic-edge) (value t)
                         &optional (error-if-not-found? t))

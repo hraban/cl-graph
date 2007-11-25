@@ -1,28 +1,25 @@
 ;;; -*- Mode: Lisp; package: cl-user; Syntax: Common-lisp; Base: 10 -*-
 
 (in-package #:common-lisp-user)
-(defpackage #:asdf-cl-graph (:use #:cl #:asdf))
-(in-package #:asdf-cl-graph)
+(defpackage #:cl-graph-system (:use #:cl #:asdf))
+(in-package #:cl-graph-system)
 
 (unless (find-system 'asdf-system-connections nil)
- (when (find-package 'asdf-install)
-   (print "Trying to install asdf-system-connections with ASDF-Install...")
-   (funcall (intern (symbol-name :install) :asdf-install) 'asdf-system-connections)))
-;; give up with a useful (?) error message
-(unless (find-system 'asdf-system-connections nil)
-  (error "The CL-Graph system requires ASDF-SYSTEM-CONNECTIONS. See 
+  (warn "The CL-Graph system would enjoy having asdf-system-connections 
+around. See 
 http://www.cliki.net/asdf-system-connections for details and download
 instructions."))
-
-(asdf:operate 'asdf:load-op 'asdf-system-connections)
+(when (find-system 'asdf-system-connections nil)
+  (operate 'load-op 'asdf-system-connections))
 
 (defsystem cl-graph
-  :version "0.8.3"
+  :version "0.8.4"
   :author "Gary Warren King <gwking@metabang.com>"
   :maintainer "Gary Warren King <gwking@metabang.com>"
   :licence "MIT Style License"
   :description "Graph manipulation utilities for Common Lisp"
-  :components ((:module 
+  :components ((:static-file "COPYING")
+	       (:module 
 		"dev"
 		:components 
 		((:file "package")
@@ -50,11 +47,11 @@ instructions."))
 		:components 
 		((:module "source"
 			  :components ((:static-file "index.lml"))))))
-  :in-order-to ((test-op (load-op cl-graph-test)))
+  :in-order-to ((test-op (load-op :cl-graph-test)))
   :perform (test-op :after (op c)
-                    (describe 
-		     (funcall (intern (symbol-name '#:run-tests) :lift) 
-			      :suite '#:cl-graph-test)))
+		    (funcall
+		      (intern (symbol-name '#:run-tests) :lift)
+		      :config :generic))
   :depends-on (:metatilities 
 	       :cl-containers
 	       :metabang-bind

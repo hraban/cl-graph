@@ -117,7 +117,9 @@ DISCUSSION
    #:has-children-p
    #:has-parent-p
    #:number-of-neighbors
-   
+   #:graph-vertexes
+   #:replace-vertex
+
    #:edge-count                    ; graph
    #:vertex-count                  ; graph
    
@@ -160,7 +162,8 @@ DISCUSSION
    #:project-bipartite-graph
    
    #:make-vertex-edges-container 
-   
+   #:make-vertex-for-graph
+
    #:vertex-degree-counts
    #:vertex-degree
    #:average-vertex-degree
@@ -170,7 +173,12 @@ DISCUSSION
    #:graph-mixing-matrix
    #:graph-edge-mixture-matrix
    #:assortativity-coefficient
-   #:vertex-degree-summary)
+   #:vertex-degree-summary
+   #:connected-components
+   #:average-local-clustering-coefficient
+   #:vertex-triangle-count
+   #:graph-edges
+   #:graph-vertexes)
 
   (:export
    #:print-dot-key-value

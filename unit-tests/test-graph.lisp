@@ -12,7 +12,7 @@
 
 (deftestsuite cl-graph-test () ())
 
-(deftestsuite test-test-vertex () ())
+(deftestsuite test-test-vertex (cl-graph-test) ())
 
 (addtest (test-test-vertex)
   test-1
@@ -68,7 +68,7 @@
   (delete-edge-between-vertexes graph-directed 'a 'b)
   (ensure-same (size (graph-edges graph-directed)) 3))
 
-;;; ---------------------------------------------------------------------------
+#|
 
 (deftestsuite cl-graph-test-traversal (cl-graph-test)
   ((g (make-container 'graph-container)))
@@ -76,8 +76,6 @@
                                   (b f) (d g) (d h) (h i)
                                   (h j)) do
                (add-edge-between-vertexes g src dst :edge-type :directed)))
-
-;;; ---------------------------------------------------------------------------
 
 #|
 
@@ -97,8 +95,6 @@ a - b - e
     (ensure-same (reverse result) 
                  '(e f b c g i j h d a) :test #'equal)))
 
-;;; ---------------------------------------------------------------------------
-
 (addtest (cl-graph-test-traversal)
   (let ((result nil))
     (traverse-elements
@@ -107,6 +103,7 @@ a - b - e
     (ensure-same (reverse result) 
                  '(a b c d e f g h i j) :test #'equal)))
     
+|#
     
 ;;; ---------------------------------------------------------------------------
 ;;; test-replace-vertex

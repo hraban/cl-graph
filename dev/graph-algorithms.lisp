@@ -141,15 +141,13 @@
    (collect-elements
     (make-iterator (connected-components graph) :unique t :transform #'parent))))
 
-;;; ---------------------------------------------------------------------------
-
 (defmethod find-connected-components ((graph basic-graph))
   (collect-elements
    (make-iterator (connected-components graph) :unique t :transform #'parent)
    :transform 
    (lambda (component)
      (subgraph-containing graph (element component) 
-                          most-positive-fixnum))))
+                          :depth most-positive-fixnum))))
 
 #+Alternate
 (defmethod find-connected-components ((graph basic-graph))

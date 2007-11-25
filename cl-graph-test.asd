@@ -1,8 +1,8 @@
 ;;; -*- Mode: Lisp; package: cl-user; Syntax: Common-lisp; Base: 10 -*-
 
 (in-package :common-lisp-user)
-(defpackage #:asdf-cl-graph-test (:use #:cl #:asdf))
-(in-package #:asdf-cl-graph-test)
+(defpackage #:cl-graph-test-system (:use #:cl #:asdf))
+(in-package #:cl-graph-test-system)
 
 (defsystem cl-graph-test
   :version "0.1"
@@ -10,7 +10,6 @@
   :maintainer "Gary Warren King <gwking@metabang.com>"
   :licence "MIT Style License"
   :description "Tests for CL-Graph"
-
   :components ((:module 
 		"unit-tests"
 		:components
@@ -26,4 +25,4 @@
 		"dev"
 		:components
 		((:static-file "notes.text"))))
-  :depends-on (cl-graph lift))
+  :depends-on (:cl-graph :lift))
