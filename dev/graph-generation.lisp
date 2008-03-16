@@ -398,7 +398,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defun poisson-vertex-degree-distribution (z k)
-  (/ (* (expt z k) (expt +e+ (- z)))
+  (/ (* (expt z k) (expt cl-mathstats:+e+ (- z)))
      (factorial k)))
 
 #|
@@ -409,7 +409,8 @@ from this distribution
 ;;; ---------------------------------------------------------------------------
 
 (defun power-law-vertex-degree-distribution (kappa k)
-  (* (- 1 (expt +e+ (- (/ kappa)))) (expt +e+ (- (/ k kappa)))))
+  (* (- 1 (expt cl-mathstats:+e+ (- (/ kappa)))) 
+     (expt cl-mathstats:+e+ (- (/ k kappa)))))
 
 ;;; ---------------------------------------------------------------------------
 

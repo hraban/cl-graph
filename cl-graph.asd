@@ -46,7 +46,7 @@ instructions."))
 		"website"
 		:components 
 		((:module "source"
-			  :components ((:static-file "index.lml"))))))
+			  :components ((:static-file "index.md"))))))
   :in-order-to ((test-op (load-op :cl-graph-test)))
   :perform (test-op :after (op c)
 		    (funcall

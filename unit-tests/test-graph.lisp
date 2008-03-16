@@ -25,7 +25,7 @@
     (ensure-same (size g) 2)))
 
 (addtest (test-test-vertex)
-  test-1
+  test-2
   (bind ((x (float 2.1d0))
          (y (float 2.1d0))
          (g (make-container 'graph-container :vertex-test #'=)))
