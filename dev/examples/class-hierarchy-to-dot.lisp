@@ -50,3 +50,28 @@
                         containers::basic-filtered-iterator-mixin
                         containers::circular-iterator-mixin)
                       "thousand-parsers:iterators.dot")
+
+#+(or)
+;; very sucky
+(let ((op (make-instance 'asdf:load-op)))
+  (graph->dot
+   (roots-and-child-function->graph 
+    (list (asdf:find-system 'cl-graph))
+    (lambda (node)
+      (print node)
+      (typecase node
+	(asdf:component
+	 (asdf:component-depends-on op node))
+	(cons
+	 (let ((op (car node)))
+	   (loop for name in (rest node) 
+	      when (asdf:find-system name nil) append
+	     (asdf:component-depends-on op (asdf:find-system name)))))))
+    4)
+   #p"/tmp/out.dot"
+   :vertex-labeler (lambda (v s)
+		     (princ (or (ignore-errors 
+				  (asdf:component-name (element v)))
+				(element v)) s))
+   :edge-labeler (lambda (e s)
+		   (declare (ignore e s)))))

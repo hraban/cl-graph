@@ -354,7 +354,7 @@ B--D []
 (defmacro defpixel-inch-accessors (name attr type)
   (bind ((actual-name (form-symbol name "-IN-PIXELS")))
     `(progn
-      (export ',actual-name)
+       (eval-always (export ',actual-name))
       (defmethod ,actual-name ((thing ,type))
         "Return the attribute in pixels assuming 72 dpi"
         (awhen (dot-attribute-value ,attr thing)
