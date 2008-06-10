@@ -848,15 +848,15 @@ something is putting something on the vertexes plist's
 ;;; ---------------------------------------------------------------------------
 
 ;; also in metatilites
-(defun graph-search (states goal-p successors combiner
-                     &key (state= #'eql) old-states
-                     (new-state-fn #'new-states))
+(defun graph-search-for-cl-graph (states goal-p successors combiner
+				  &key (state= #'eql) old-states
+				  (new-state-fn #'new-states))
   "Find a state that satisfies goal-p.  Start with states,
   and search according to successors and combiner.  
   Don't try the same state twice."
   (cond ((null states) nil)
         ((funcall goal-p (first states)) (first states))
-        (t (graph-search
+        (t (graph-search-for-cl-graph
              (funcall
                combiner
                (funcall new-state-fn states successors state= old-states)
@@ -870,7 +870,7 @@ something is putting something on the vertexes plist's
 (defmethod in-cycle-p ((graph basic-graph) (start-vertex basic-vertex))
   (let ((first-time? t))
     (not (null
-          (graph-search 
+          (graph-search-for-cl-graph 
            (list start-vertex)
            (lambda (v)
              (if first-time?
