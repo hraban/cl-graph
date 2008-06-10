@@ -50,7 +50,7 @@ instructions."))
 		    (funcall
 		      (intern (symbol-name '#:run-tests) :lift)
 		      :config :generic))
-  :depends-on (:metatilities-base
+  :depends-on ((:version :metatilities-base "0.6.0")
 	       :dynamic-classes
 	       :cl-containers
 	       :metabang-bind
