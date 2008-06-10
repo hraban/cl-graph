@@ -817,7 +817,7 @@ something is putting something on the vertexes plist's
 
 (defmethod traverse-elements-helper ((thing basic-vertex) (style (eql :depth)) marker fn)
   (when (eq (tag thing) marker)
-    (nilf (tag thing))
+    (setf (tag thing) nil)
     (iterate-children
      thing
      (lambda (vertex)
@@ -829,7 +829,7 @@ something is putting something on the vertexes plist's
 
 (defmethod traverse-elements-helper ((thing basic-vertex) (style (eql :breadth)) marker fn)
   (when (eq (tag thing) marker)
-    (nilf (tag thing))
+    (setf (tag thing) nil)
     (funcall fn thing))
   
   (iterate-neighbors
@@ -842,7 +842,7 @@ something is putting something on the vertexes plist's
    thing
    (lambda (vertex)
      (when (eq (tag vertex) marker)
-       (nilf (tag vertex))
+       (setf (tag vertex) nil)
        (traverse-elements-helper vertex style marker fn)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -854,7 +854,7 @@ something is putting something on the vertexes plist's
            (list start-vertex)
            (lambda (v)
              (if first-time?
-               (nilf first-time?)
+               (setf first-time? nil)
                (eq (find-vertex graph v) start-vertex)))
            (lambda (v)
              (child-vertexes v))
@@ -877,7 +877,7 @@ something is putting something on the vertexes plist's
             &optional (marked (make-container 'simple-associative-container))
             (previous nil))
   (block do-it
-    (tf (item-at-1 marked current))
+    (setf (item-at-1 marked current) t)
     (iterate-children current
                       (lambda (child)
                         (cond 
