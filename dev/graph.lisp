@@ -456,14 +456,14 @@ something is putting something on the vertexes plist's
 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod find-edge-between-vertexes ((graph basic-graph) (value-1 t) (value-2 t)
-                                       &key (error-if-not-found? t))
-  (let ((v1 (find-vertex graph value-1 error-if-not-found?))
-        (v2 (find-vertex graph value-2 error-if-not-found?)))
-    (aif (and v1 v2 (find-edge-between-vertexes graph v1 v2))
-         it
-         (when error-if-not-found?
-           (error 'graph-edge-not-found-error :vertex-1 v1 :vertex-2 v2)))))
+(defmethod find-edge-between-vertexes
+    ((graph basic-graph) (value-1 t) (value-2 t)
+     &key (error-if-not-found? t))
+  (let* ((v1 (find-vertex graph value-1 error-if-not-found?))
+	 (v2 (find-vertex graph value-2 error-if-not-found?)))
+    (or (and v1 v2 (find-edge-between-vertexes graph v1 v2)))
+    (when error-if-not-found?
+      (error 'graph-edge-not-found-error :vertex-1 v1 :vertex-2 v2))))
 
 ;;; ---------------------------------------------------------------------------
 
@@ -617,10 +617,9 @@ something is putting something on the vertexes plist's
 
 (defmethod find-vertex ((graph basic-graph) (value t)
                         &optional (error-if-not-found? t))
-  (aif (find-item (graph-vertexes graph) (funcall (vertex-key graph) value))
-       it
-       (when error-if-not-found?
-         (error 'graph-vertex-not-found-error :vertex value :graph graph))))
+  (or (find-item (graph-vertexes graph) (funcall (vertex-key graph) value))
+      (when error-if-not-found?
+	(error 'graph-vertex-not-found-error :vertex value :graph graph))))
 
 (defmethod find-vertex ((graph basic-graph) (vertex basic-vertex)
                         &optional (error-if-not-found? t))
@@ -646,18 +645,16 @@ something is putting something on the vertexes plist's
 (defmethod search-for-vertex ((graph basic-graph) (vertex basic-vertex)
                               &key (key (vertex-key graph)) (test 'equal)
                               (error-if-not-found? t))
-  (aif (search-for-node (graph-vertexes graph) vertex :test test :key key)
-       it
-       (when error-if-not-found?
-         (error "~A not found in ~A" vertex graph))))
+  (or (search-for-node (graph-vertexes graph) vertex :test test :key key)
+      (when error-if-not-found?
+	(error "~A not found in ~A" vertex graph))))
 
 (defmethod search-for-vertex ((graph basic-graph) (vertex t)
                               &key (key (vertex-key graph)) (test 'equal)
                               (error-if-not-found? t))
-  (aif (search-for-element (graph-vertexes graph) vertex :test test :key key)
-       it
-       (when error-if-not-found?
-         (error "~A not found in ~A" vertex graph))))
+  (or (search-for-element (graph-vertexes graph) vertex :test test :key key)
+      (when error-if-not-found?
+	(error "~A not found in ~A" vertex graph))))
 
 (defmethod iterate-elements ((graph basic-graph) fn)
    (iterate-elements (graph-vertexes graph) 

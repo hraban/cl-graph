@@ -357,8 +357,8 @@ B--D []
        (eval-always (export ',actual-name))
       (defmethod ,actual-name ((thing ,type))
         "Return the attribute in pixels assuming 72 dpi"
-        (awhen (dot-attribute-value ,attr thing)
-          (* 72 it)))
+        (when (dot-attribute-value ,attr thing)
+          (* 72 (dot-attribute-value ,attr thing))))
       (defmethod (setf ,actual-name) (value (thing ,type))
         "Set the attribute in pixels assuming 72 dpi"
         (setf (dot-attribute-value ,attr thing)
