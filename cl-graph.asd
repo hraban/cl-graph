@@ -33,8 +33,6 @@ instructions."))
 			:depends-on ("graph"))
 		 (:file "graph-matrix"
 			:depends-on ("graph"))
-		 (:file "graph-metrics"
-			:depends-on ("graph"))
 		 (:file "graph-algorithms"
 			:depends-on ("graph"))
                                      
@@ -52,12 +50,12 @@ instructions."))
 		    (funcall
 		      (intern (symbol-name '#:run-tests) :lift)
 		      :config :generic))
-  :depends-on (:metatilities 
+  :depends-on (:metatilities-base
+	       :dynamic-classes
 	       :cl-containers
 	       :metabang-bind
-	       :cl-mathstats
-	       ;; makes ASDF-Install get this automatically
-	       :asdf-system-connections
+	       ;:cl-mathstats
+	       :moptilities
 	       ))
 
 (defmethod operation-done-p 
@@ -90,3 +88,11 @@ instructions."))
   :components ((:module 
 		"dev"
 		:components ((:file "copying")))))
+
+#+asdf-system-connections
+(asdf:defsystem-connection cl-graph-and-cl-mathstats
+  :requires (cl-graph cl-mathstats)
+  :components ((:module 
+		"dev"
+		:components
+		((:file "graph-metrics")))))
