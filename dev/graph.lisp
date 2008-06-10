@@ -252,7 +252,7 @@ something is putting something on the vertexes plist's
 ;;; ---------------------------------------------------------------------------
 
 (defmethod make-graph ((classes list) &rest args)
-  (let ((name (find-or-create-class 'basic-graph classes))) 
+  (let ((name (dynamic-classes:find-or-create-class 'basic-graph classes))) 
     (apply #'make-instance name args)))
 
 ;;; ---------------------------------------------------------------------------
@@ -847,6 +847,26 @@ something is putting something on the vertexes plist's
 
 ;;; ---------------------------------------------------------------------------
 
+;; also in metatilites
+(defun graph-search (states goal-p successors combiner
+                     &key (state= #'eql) old-states
+                     (new-state-fn #'new-states))
+  "Find a state that satisfies goal-p.  Start with states,
+  and search according to successors and combiner.  
+  Don't try the same state twice."
+  (cond ((null states) nil)
+        ((funcall goal-p (first states)) (first states))
+        (t (graph-search
+             (funcall
+               combiner
+               (funcall new-state-fn states successors state= old-states)
+               (rest states))
+             goal-p successors combiner
+             :state= state=
+             :old-states (adjoin (first states) old-states
+                                 :test state=)
+             :new-state-fn new-state-fn))))
+
 (defmethod in-cycle-p ((graph basic-graph) (start-vertex basic-vertex))
   (let ((first-time? t))
     (not (null
@@ -1069,7 +1089,8 @@ nil gathers the entire closure(s)."
   (assign-level graph 0)
   (let ((depth 0))
     (iterate-vertexes graph (lambda (vertex)
-                              (maxf depth (depth-level vertex))))
+                              (when (> (depth-level vertex) depth)
+				(setf depth (depth-level vertex)))))
     depth))
 
 ;;; ---------------------------------------------------------------------------

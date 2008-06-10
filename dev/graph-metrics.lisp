@@ -11,6 +11,13 @@ DISCUSSION
 |#
 (in-package #:metabang.graph)
 
+(eval-always 
+  (import '(cl-mathstats:matrix-trace
+	    cl-mathstats:sum-of-array-elements
+	    cl-mathstats:matrix-multiply
+	    cl-mathstats:normalize-matrix
+	    cl-mathstats:combination-count
+	    )))
 
 (defun vertex-degree-counts (g)
   "Returns an associative-container mapping edge-counts to the number of vertexes with that edge-count."
