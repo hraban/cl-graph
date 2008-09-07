@@ -40,14 +40,25 @@
 ;;; ---------------------------------------------------------------------------
 
 (deftestsuite test-basic-graph-properties (cl-graph-test)
-  ((graph-undirected (make-container 'graph-container :default-edge-type :undirected))
-   (graph-directed (make-container 'graph-container :default-edge-type :directed)))
+  ((graph-undirected (make-container 'graph-container
+				     :default-edge-type :undirected))
+   (graph-directed (make-container 'graph-container
+				   :default-edge-type :directed)))
   :setup ((loop for v in '(a b c d e) do
                 (add-vertex graph-undirected v)
                 (add-vertex graph-directed v))
           (loop for (v1 . v2) in '((a . b) (a . c) (b . d) (c . e)) do
                 (add-edge-between-vertexes graph-undirected v1 v2)
                 (add-edge-between-vertexes graph-directed v1 v2))))
+
+#+(or)
+(let ((g (make-container 'graph-container
+			 :default-edge-type :directed)))
+  (loop for v in '(a b c d e) do
+                (add-vertex g v))
+  (loop for (v1 . v2) in '((a . b) (a . c) (b . d) (c . e)) do
+       (add-edge-between-vertexes g v1 v2))
+  g)
 
 ;;; ---------------------------------------------------------------------------
 
