@@ -13,7 +13,7 @@ instructions."))
   (operate 'load-op 'asdf-system-connections))
 
 (defsystem cl-graph
-  :version "0.9.0"
+  :version "0.9.1"
   :author "Gary Warren King <gwking@metabang.com>"
   :maintainer "Gary Warren King <gwking@metabang.com>"
   :licence "MIT Style License"
