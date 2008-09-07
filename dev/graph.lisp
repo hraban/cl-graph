@@ -461,9 +461,10 @@ something is putting something on the vertexes plist's
      &key (error-if-not-found? t))
   (let* ((v1 (find-vertex graph value-1 error-if-not-found?))
 	 (v2 (find-vertex graph value-2 error-if-not-found?)))
-    (or (and v1 v2 (find-edge-between-vertexes graph v1 v2)))
-    (when error-if-not-found?
-      (error 'graph-edge-not-found-error :vertex-1 v1 :vertex-2 v2))))
+    (or (and v1 v2 (find-edge-between-vertexes graph v1 v2))
+	(when error-if-not-found?
+	  (error 'graph-edge-not-found-error
+		 :graph graph :vertex-1 v1 :vertex-2 v2)))))
 
 ;;; ---------------------------------------------------------------------------
 
