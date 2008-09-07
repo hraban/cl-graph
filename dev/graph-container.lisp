@@ -268,7 +268,7 @@ DISCUSSION
   (iterate-elements (vertex-edges vertex)
                     (lambda (edge)
                       (when (or (undirected-edge-p edge)
-                                (eq vertex (target-vertex edge)))
+                                (eq vertex (source-vertex edge)))
                         (funcall fn edge)))))
 
 ;;; ---------------------------------------------------------------------------
@@ -277,7 +277,7 @@ DISCUSSION
   (iterate-elements (vertex-edges vertex)
                     (lambda (edge)
                       (when (or (undirected-edge-p edge)
-                                (eq vertex (source-vertex edge)))
+                                (eq vertex (target-vertex edge)))
                         (funcall fn edge)))))
 
 ;;; ---------------------------------------------------------------------------
