@@ -66,6 +66,6 @@
 	 (parent-vertexes (parent-vertexes b)))
     (ensure-same child-vertexes (list (find-vertex g 'c)
 				      (find-vertex g 'i))
-		 :test 'set-equal))
+		 :test 'set-equal)
     (ensure-same parent-vertexes (list (find-vertex g 'a))
-		 :test 'set-equal))
+		 :test 'set-equal)))
