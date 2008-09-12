@@ -37,3 +37,35 @@
 		     (eq b (target-vertex edge)))
 		   target-edges) :report "targets")))
     
+(addtest (test-api
+	  :documentation "case 218")
+  parents-of-child-vertexes
+  (let* ((g (build-single-diamond-graph :directed))
+	 (b (find-vertex g 'b))
+	 (child-vertexes (child-vertexes b)))
+    (ensure (every (lambda (vertex)
+		     (member b (parent-vertexes vertex)))
+		   child-vertexes) :report "children")))
+
+(addtest (test-api
+	  :documentation "case 218")
+  children-of-parent-vertexes
+  (let* ((g (build-single-diamond-graph :directed))
+	 (b (find-vertex g 'b))
+	 (parent-vertexes (parent-vertexes b)))
+    (ensure (every (lambda (vertex)
+		     (member b (child-vertexes vertex)))
+		   parent-vertexes) :report "parents")))
+
+(addtest (test-api
+	  :documentation "case 218")
+  parents-and-children=are-correct
+  (let* ((g (build-single-diamond-graph :directed))
+	 (b (find-vertex g 'b))
+	 (child-vertexes (child-vertexes b))
+	 (parent-vertexes (parent-vertexes b)))
+    (ensure-same child-vertexes (list (find-vertex g 'c)
+				      (find-vertex g 'i))
+		 :test 'set-equal))
+    (ensure-same parent-vertexes (list (find-vertex g 'a))
+		 :test 'set-equal))

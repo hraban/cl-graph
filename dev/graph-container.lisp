@@ -283,14 +283,14 @@ DISCUSSION
 ;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-children ((vertex graph-container-vertex) fn)
-  (iterate-target-edges vertex
+  (iterate-source-edges vertex
                         (lambda (edge)
                           (funcall fn (other-vertex edge vertex)))))
 
 ;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-parents ((vertex graph-container-vertex) fn)
-  (iterate-source-edges vertex
+  (iterate-target-edges vertex
                         (lambda (edge)
                           (funcall fn (other-vertex edge vertex)))))
 
