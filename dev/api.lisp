@@ -439,17 +439,22 @@ and any other initialization arguments that make sense for the vertex class."))
 ;;; ---------------------------------------------------------------------------
 
 (defgeneric source-edges (vertex &optional filter)
-  (:documentation "Returns a list of the source edges of `vertex`. [?? Could be a defun]."))
+  (:documentation "Returns a list of the source edges of `vertex`. I.e., 
+the edges that begin at `vertex`."))
 
 ;;; ---------------------------------------------------------------------------
 
 (defgeneric target-edges (vertex &optional filter)
-  (:documentation "Returns a list of the target edges of `vertex`. [?? Could be a defun]."))
+  (:documentation "Returns a list of the target edges of `vertex`. 
+I.e., the edges that end at `vertex`."))
 
 ;;; ---------------------------------------------------------------------------
 
 (defgeneric child-vertexes (vertex &optional filter)
-  (:documentation "Returns a list of the vertexes to which `vertex` is connected by an edge and for which `vertex` is the source vertex. If the connecting edge is undirected, then the vertex is always counted as a source. [?? Could be a defun]."))
+  (:documentation "Returns a list of the vertexes to which `vertex` 
+is connected by an edge and for which `vertex` is the source vertex. 
+If the connecting edge is undirected, then the vertex is always 
+counted as a source. [?? Could be a defun]."))
 
 ;;; ---------------------------------------------------------------------------
 
