@@ -560,7 +560,7 @@ from this distribution
 
 (defun generate-girvan-newman-graph (generator graph-class z-in)
   (warn "This is broken!")
-  (bind ((g (make-instance graph-class))
+  (let ((g (make-instance graph-class))
          (group-count 4)
          (group-size 32)
          (edge-count 16)
@@ -589,7 +589,7 @@ from this distribution
                
                (check-type from-group fixnum)
                (loop 
-                 (bind ((other-group (integer-random generator 0 (- group-count 2)))
+                 (let ((other-group (integer-random generator 0 (- group-count 2)))
                         (other (sample-element 
                                 (item-at groups (if (= from-group other-group)
                                                   (1+ other-group)
@@ -662,7 +662,7 @@ from this distribution
     (iterate-edges
      g
      (lambda (e)
-       (bind ((v1 (vertex-1 e))
+       (let ((v1 (vertex-1 e))
               (v2 (vertex-2 e))
               (id1 (element v1))
               (id2 (element v2)))
@@ -752,7 +752,7 @@ from this distribution
                      (list vertex other-kind))))
            (update (kind thing)
              ;; handle bookkeeping for changed vertex degree
-             (bind ((sampler (aref vertex-sampler kind))
+             (let ((sampler (aref vertex-sampler kind))
                     (node (find-node sampler thing)))
                (delete-node sampler node)
                (insert-item sampler thing))))
@@ -1231,7 +1231,7 @@ Split into a function to compute some of the intermediate pieces and one to use 
               (flet ((sample-edges-for-vertex (vertex)
                        ;(spy vertex)
                        (loop repeat (item-at-1 vertex-degrees vertex) do
-                             (bind (((edge-kind . edge) (delete-last edge-sampler)))
+                             (let (((edge-kind . edge) (delete-last edge-sampler)))
                                (ecase edge-kind
                                  (:source (setf (first edge) vertex))
                                  (:target (setf (second edge) vertex)))))))
@@ -1315,7 +1315,7 @@ should include pointer back to original graph
 ;;; ---------------------------------------------------------------------------
 
 (defmethod initialize-instance :after ((object weighted-edge-sampler) &key)
-  (bind ((generator (generator object))
+  (let ((generator (generator object))
          (weighted-edge-count 
           (let ((result 0))
             (iterate-edges (graph object) (lambda (e) (incf result (weight e))))
@@ -1439,10 +1439,10 @@ should include pointer back to original graph
 
 (defmethod generate-simple-preferential-attachment-graph
            (generator graph size minimum-degree)
-  (bind ((m (make-array (list (* 2 size minimum-degree)))))
+  (let ((m (make-array (list (* 2 size minimum-degree)))))
     (loop for v from 0 to (1- size) do
           (loop for i from 0 to (1- minimum-degree) do
-                (bind ((index (* 2 (+ i (* v minimum-degree))))
+                (let ((index (* 2 (+ i (* v minimum-degree))))
                        (r (integer-random generator 0 index)))
                   (setf (item-at m index) v
                         (item-at m (1+ index)) (item-at m r)))))
@@ -1487,7 +1487,7 @@ should include pointer back to original graph
                       assortativity-matrix 
                       &key (vertex-labeler 'simple-group-id-generator) 
                       (duplicate-edge-function :ignore))
-  (bind ((kind-count (array-dimension kind-matrix 0))
+  (let ((kind-count (array-dimension kind-matrix 0))
          (vertex-kinds (sample-vertexes-for-mixed-graph generator size kind-matrix))
          (vertex-kind-counts (element-counts vertex-kinds :sort #'< :sort-on :values))
          (edge-recorders (make-array (list kind-count)))
@@ -1506,9 +1506,9 @@ should include pointer back to original graph
     ;; add vertexes (to ensure that we have something at which to point)
     (loop for v from 0 to (1- size)
           for kind in vertex-kinds do
-          (bind ((edge-recorder (aref edge-recorders kind)))
+          (let ((edge-recorder (aref edge-recorders kind)))
             (loop for i from 0 to (1- minimum-degree) do
-                  (bind ((index (* 2 (+ i (* (aref count-recorders kind) minimum-degree)))))
+                  (let ((index (* 2 (+ i (* (aref count-recorders kind) minimum-degree)))))
                     (setf (item-at edge-recorder index) 
                           (funcall vertex-labeler kind v)))))
           (incf (aref count-recorders kind)))
@@ -1518,10 +1518,10 @@ should include pointer back to original graph
       (setf (aref count-recorders i) 0))
     (loop for v from 0 to (1- size)
           for kind in vertex-kinds do
-          (bind ((edge-recorder (aref edge-recorders kind))
+          (let ((edge-recorder (aref edge-recorders kind))
                  (edge-sampler (aref edge-samplers kind)))
             (loop for i from 0 to (1- minimum-degree) do
-                  (bind ((index (* 2 (+ i (* (aref count-recorders kind) minimum-degree))))
+                  (let ((index (* 2 (+ i (* (aref count-recorders kind) minimum-degree))))
                          (other-kind (funcall edge-sampler)) 
                          (other-index (* 2 (+ i (* (min (1- (item-at vertex-kind-counts other-kind))
                                                         (aref count-recorders other-kind))
@@ -1556,7 +1556,7 @@ should include pointer back to original graph
               (loop for vertex across (aref edge-recorders kind)
                     for index = 0 then (1+ index) 
                     when (consp vertex) do
-                    (bind (((other-kind other-index) vertex))
+                    (let (((other-kind other-index) vertex))
                       #+Ignore
                       (when-debugging-format 
                        generate-preferential-attachment-graph "~2D ~10D, ~A -> ~A" 
@@ -1701,7 +1701,7 @@ should include pointer back to original graph
 (defun add-acquaintance-and-maybe-kill-something 
        (generator graph death-probability duplicate-edge-function)
   ;; add edges step 
-  (bind ((vertex (sample-element (graph-vertexes graph) generator))
+  (let ((vertex (sample-element (graph-vertexes graph) generator))
          (neighbors (when (>= (size (vertex-edges vertex)) 2)
                       (sample-unique-elements 
                        (vertex-edges vertex) generator 2))))

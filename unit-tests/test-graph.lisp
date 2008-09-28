@@ -16,9 +16,9 @@
 
 (addtest (test-test-vertex)
   test-1
-  (metatilities:bind ((x (float 2.1d0))
-                     (y (float 2.1d0))
-                     (g (make-container 'graph-container)))
+  (let ((x (float 2.1d0))
+	(y (float 2.1d0))
+	(g (make-container 'graph-container)))
     (add-vertex g (+ x y))
     (add-vertex g (+ x y))
     
@@ -26,7 +26,7 @@
 
 (addtest (test-test-vertex)
   test-2
-  (bind ((x (float 2.1d0))
+  (let ((x (float 2.1d0))
          (y (float 2.1d0))
          (g (make-container 'graph-container :vertex-test #'=)))
     (add-vertex g (+ x y))

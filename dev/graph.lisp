@@ -1029,7 +1029,7 @@ length"
 (defun map-shortest-paths
     (graph start-vertex depth fn &key (filter (constantly t)))
   "Apply fn to each shortest path starting at `start-vertex` of depth `depth`. The `filter` predicate is used to remove vertexes from consideration."
-  (bind ((visited (make-container 'simple-associative-container
+  (let ((visited (make-container 'simple-associative-container
                                   :test #'equal)))
     (labels ((visit (p)
                (setf (item-at-1 visited p) t))

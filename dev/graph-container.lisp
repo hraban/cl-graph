@@ -149,7 +149,7 @@ DISCUSSION
                      &key force-new?)
   (declare (ignore force-new?))
   
-  (bind ((vertex-1 (vertex-1 edge))
+  (let ((vertex-1 (vertex-1 edge))
          (vertex-2 (vertex-2 edge)))
         
     (cond ((eq vertex-1 vertex-2)
@@ -209,7 +209,7 @@ DISCUSSION
                                           (value-2 t)
                                           fn
                                           &key error-if-not-found?)
-  (bind ((v1 (find-vertex graph value-1 error-if-not-found?))
+  (let ((v1 (find-vertex graph value-1 error-if-not-found?))
          (v2 (find-vertex graph value-2 error-if-not-found?)))
     (or (and v1 v2 (find-edge-between-vertexes-if graph v1 v2 fn))
 	(when error-if-not-found?

@@ -211,8 +211,8 @@
   (iterate-elements
    edges
    (lambda (edge)
-     (bind ((v1 (element (source-vertex edge)))
-            (v2 (element (target-vertex edge))))
+     (let ((v1 (element (source-vertex edge)))
+	   (v2 (element (target-vertex edge))))
        (add-edge-between-vertexes
         graph v1 v2 :edge-class (type-of edge)
         :edge-type (if (directed-edge-p edge)
@@ -240,14 +240,14 @@
 (defmethod minimum-spanning-tree ((graph basic-graph) 
                                   &key
                                   (edge-sorter #'edge-lessp-by-weight))
-  (bind ((result nil))
+  (let ((result nil))
     (iterate-vertexes 
      graph
      (lambda (v)
        (mst-make-set v)))
     
     (loop for edge in (sort (edges graph) edge-sorter) do
-          (bind ((v1 (source-vertex edge))
+          (let ((v1 (source-vertex edge))
                  (v2 (target-vertex edge)))
             
             (unless (eq (mst-find-set v1)
@@ -266,7 +266,7 @@
 (defmethod minimum-spanning-tree ((vertex-list list) 
                                   &key
                                   (edge-sorter #'edge-lessp-by-weight))
-  (bind ((result nil)
+  (let ((result nil)
          (v-edges (remove-duplicates 
                    (flatten (mapcar #'edges vertex-list)) :test #'eq)))
     
@@ -276,10 +276,10 @@
        (mst-make-set v)))    
     
     (loop for edge in (sort v-edges edge-sorter) do
-          (bind ((v1 (source-vertex edge))
-                 (v2 (target-vertex edge))
-                 (v1-set (mst-find-set v1))
-                 (v2-set (mst-find-set v2)))
+          (let ((v1 (source-vertex edge))
+		(v2 (target-vertex edge))
+		(v1-set (mst-find-set v1))
+		(v2-set (mst-find-set v2)))
 
             (when (or (not v1-set)
                            (not v2-set))
@@ -308,7 +308,7 @@
 ;;; ---------------------------------------------------------------------------
 
 #+test
-(bind ((g (make-container 'graph-container)))
+(let ((g (make-container 'graph-container)))
   (add-edge-between-vertexes g :v :y :edge-type :directed)
   (add-edge-between-vertexes g :u :x :edge-type :directed)
   (add-edge-between-vertexes g :x :v :edge-type :directed)
@@ -457,7 +457,7 @@
                            (edges u)
                            :filter (lambda (e)
                                      (out-edge-for-vertex-p e u))) sorter) do
-        (bind ((v (other-vertex edge u)))
+        (let ((v (other-vertex edge u)))
           
           (unless (color edge)
             (setf (color edge) (color v)))
@@ -477,7 +477,7 @@
 ;;; ---------------------------------------------------------------------------
 
 #+test
-(bind ((g (make-container 'graph-container)))
+(let ((g (make-container 'graph-container)))
   (add-edge-between-vertexes g :v :y :edge-type :directed)
   (add-edge-between-vertexes g :u :x :edge-type :directed)
   (add-edge-between-vertexes g :x :v :edge-type :directed)
@@ -548,7 +548,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod map-over-all-combinations-of-k-vertexes ((graph basic-graph) k fn)
-  (bind ((vertex-count (size graph))
+  (let* ((vertex-count (size graph))
          (symbols (make-list k :initial-element vertex-count))
          (vertexes (vertexes graph))) 
     (iterate-over-indexes 
@@ -562,7 +562,7 @@
 ;;; ---------------------------------------------------------------------------
 
 #+test
-(bind ((result nil)
+(let ((result nil)
        (g (make-container 'graph-container)))
   (add-edge-between-vertexes g :u :v :edge-type :directed)
   (add-edge-between-vertexes g :u :x :edge-type :directed)
@@ -576,7 +576,7 @@
    g
    4
    (lambda (vertex-list)
-     (bind ((graph-from-vertexes (make-graph-from-vertexes vertex-list)))
+     (let ((graph-from-vertexes (make-graph-from-vertexes vertex-list)))
        (when (mst-kruskal graph-from-vertexes #'identity-sorter)
          (push graph-from-vertexes result)))))
   result)
@@ -587,7 +587,7 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod map-over-all-combinations-of-k-edges ((graph basic-graph) k fn)
-  (bind ((edge-count (edge-count graph))
+  (let* ((edge-count (edge-count graph))
          (symbols (make-list k :initial-element edge-count))
          (edges (edges graph))) 
     (print symbols)
@@ -602,10 +602,10 @@
 ;;; ---------------------------------------------------------------------------
 
 (defmethod map-over-all-combinations-of-k-edges ((vertex basic-vertex) k fn)
-  (bind ((edge-count (edge-count vertex))
-         (symbols (make-list k :initial-element edge-count))
-         (edges (edges vertex))) 
-    (print symbols)
+  (let* ((edge-count (edge-count vertex))
+	 (symbols (make-list k :initial-element edge-count))
+	 (edges (edges vertex))) 
+    ;(print symbols)
     (iterate-over-indexes 
      symbols
      (lambda (edge-indexes)

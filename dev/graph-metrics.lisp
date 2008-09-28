@@ -74,7 +74,7 @@ DISCUSSION
                                     &key (edge-size (constantly 1)))
   "Prints a summary of vertex degrees in `graph` to standard-out. Both the average degree of all vertexes and the average degree between all pairs of vertex classes \(as determined by the vertex-classifier\) will be printed. The `edge-size` parameter is passed on to `vertex-degree` to allow for weighted edges."
   
-  (bind ((counts (node-counts graph :key vertex-classifier))
+  (let ((counts (node-counts graph :key vertex-classifier))
          (kinds (collect-elements counts :transform #'first)))
     (format t "~%Vertex counts: ")
     (loop for (kind count) in counts do

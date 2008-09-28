@@ -51,8 +51,7 @@ instructions."))
 		      (intern (symbol-name '#:run-tests) :lift)
 		      :config :generic))
   :depends-on ((:version :metatilities-base "0.6.0")
-	       :cl-containers
-	       :metabang-bind
+	       (:version :cl-containers "0.11.0")
 	       ))
 
 (defmethod operation-done-p 
