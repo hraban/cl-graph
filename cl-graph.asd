@@ -51,11 +51,8 @@ instructions."))
 		      (intern (symbol-name '#:run-tests) :lift)
 		      :config :generic))
   :depends-on ((:version :metatilities-base "0.6.0")
-	       :dynamic-classes
 	       :cl-containers
 	       :metabang-bind
-	       ;:cl-mathstats
-	       :moptilities
 	       ))
 
 (defmethod operation-done-p 
@@ -96,3 +93,23 @@ instructions."))
 		"dev"
 		:components
 		((:file "graph-metrics")))))
+
+#+asdf-system-connections
+(asdf:defsystem-connection cl-graph-and-moptilities
+  :requires (cl-graph moptilities)
+  :components ((:module 
+		"dev"
+		:components
+		((:file "subgraph-containing")))))
+
+#+asdf-system-connections
+(asdf:defsystem-connection cl-graph-and-dynamic-classes
+  :requires (cl-graph dynamic-classes)
+  :components ((:module 
+		"dev"
+		:components
+		((:file "dynamic-classes")))))
+
+
+
+

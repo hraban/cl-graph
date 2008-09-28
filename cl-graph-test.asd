@@ -23,7 +23,6 @@
 		:components
 		((:file "test-graph-container")
 		 (:file "test-connected-components")
-		 (:file "test-graph-metrics")
 		 ;;(:file "test-graph-algorithms")
 		 (:file "test-api")
 		 ))
@@ -33,3 +32,13 @@
 		:components
 		((:static-file "notes.text"))))
   :depends-on (:cl-graph :lift))
+
+;; 2008-09-24 - I don't know if this will work or not 
+;; i.e., will it happen at the right time wrt everything else
+#+asdf-system-connections
+(asdf:defsystem-connection cl-graph-test-and-cl-mathstats
+  :requires (cl-graph moptilities)
+  :components ((:module 
+		"unit-tests"
+		:components
+		((:file "test-graph-metrics")))))

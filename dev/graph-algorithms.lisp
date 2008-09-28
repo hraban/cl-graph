@@ -228,46 +228,6 @@
   graph)
 
 ;;; ---------------------------------------------------------------------------
-;;; for completeness 
-;;; ---------------------------------------------------------------------------
-
-(defmethod make-graph-from-vertexes ((vertex-list list))
-  (bind ((edges-to-keep nil)
-         (g (copy-template (graph (first vertex-list)))))
-        
-    (iterate-elements
-     vertex-list
-     (lambda (v)
-       (add-vertex g (element v))
-       (iterate-elements
-        (edges v)
-        (lambda (e)
-          (when (and (member (vertex-1 e) vertex-list)
-                     (member (vertex-2 e) vertex-list))
-            (pushnew e edges-to-keep :test #'eq))))))
-    
-    (iterate-elements
-     edges-to-keep
-     (lambda (e)
-       (bind ((v1 (source-vertex e))
-              (v2 (target-vertex e)))
-         ;;?? can we use copy here...
-         (add-edge-between-vertexes
-          g (element v1) (element v2)
-          :edge-type (if (directed-edge-p e)
-                       :directed
-                       :undirected)
-          :if-duplicate-do :force
-          :edge-class (type-of e)
-          :value (value e)
-          :edge-id (edge-id e)
-          :element (element e)
-          :tag (tag e)
-          :graph g
-          :color (color e)))))
-    g))
-
-;;; ---------------------------------------------------------------------------
 
 (defmethod edge-lessp-by-weight ((e1 basic-edge) (e2 basic-edge))
   (< (weight e1) (weight e2)))
