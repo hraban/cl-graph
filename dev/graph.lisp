@@ -198,7 +198,8 @@ something is putting something on the vertexes plist's
 ;;; internals 
 ;;; ---------------------------------------------------------------------------
 
-(defmethod add-vertex ((graph basic-graph) (value basic-vertex) &key if-duplicate-do)
+(defmethod add-vertex
+    ((graph basic-graph) (value basic-vertex) &key if-duplicate-do)
   (declare (ignore if-duplicate-do))
   (values value))
 
@@ -1025,7 +1026,8 @@ length"
 
 ;;; ---------------------------------------------------------------------------
 
-(defun map-shortest-paths (graph start-vertex depth fn &key (filter (constantly t)))
+(defun map-shortest-paths
+    (graph start-vertex depth fn &key (filter (constantly t)))
   "Apply fn to each shortest path starting at `start-vertex` of depth `depth`. The `filter` predicate is used to remove vertexes from consideration."
   (bind ((visited (make-container 'simple-associative-container
                                   :test #'equal)))

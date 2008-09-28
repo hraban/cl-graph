@@ -262,7 +262,7 @@
 
 ;;; ---------------------------------------------------------------------------
 
-#+ignore ;;; shit
+#+ignore ;;; shoot
 (defmethod minimum-spanning-tree ((vertex-list list) 
                                   &key
                                   (edge-sorter #'edge-lessp-by-weight))
@@ -273,9 +273,7 @@
     (iterate-container
      vertex-list
      (lambda (v)
-       (mst-make-set v)))
-    
-    
+       (mst-make-set v)))    
     
     (loop for edge in (sort v-edges edge-sorter) do
           (bind ((v1 (source-vertex edge))
