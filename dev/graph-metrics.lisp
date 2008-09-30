@@ -28,7 +28,6 @@ DISCUSSION
        (incf (item-at c (edge-count v)))))
     c))
 
-;;; ---------------------------------------------------------------------------
 
 (defun average-vertex-degree (graph &key 
                                 (vertex-filter (constantly t))
@@ -47,7 +46,6 @@ DISCUSSION
       (values (float (/ total size)))
       nil)))
 
-;;; ---------------------------------------------------------------------------
 
 (defun vertex-degree (vertex &key 
                              (edge-filter (constantly t))
@@ -56,7 +54,6 @@ DISCUSSION
   (declare (inline %vertex-degree)) 
   (%vertex-degree vertex edge-filter edge-size))
 
-;;; ---------------------------------------------------------------------------
 
 (defun %vertex-degree (vertex edge-filter edge-size)
   "Called internally by `vertex-degree` and `average-vertex-degree`."
@@ -68,7 +65,6 @@ DISCUSSION
          (incf degree (funcall edge-size e)))))
     degree))
 
-;;; ---------------------------------------------------------------------------
 
 (defun vertex-degree-summary (graph vertex-classifier
                                     &key (edge-size (constantly 1)))
@@ -102,7 +98,6 @@ DISCUSSION
            "Average vertex degree between ~A and ~A:"
            k-1 k-2))))))
 
-;;; ---------------------------------------------------------------------------
 
 #|
 Transitivity or Clustering.
@@ -157,7 +152,6 @@ the sociological literature, where it is referred to as the network density
     (float (/ (vertex-triangle-count vertex)
               (combination-count (edge-count vertex) 2)))))
 
-;;; ---------------------------------------------------------------------------
 
 (defun vertex-triangle-count (vertex)
   (let ((neighbors (neighbor-vertexes vertex)))
@@ -166,7 +160,6 @@ the sociological literature, where it is referred to as the network density
                          (member v neighbors))
                        (neighbor-vertexes neighbor)) 2))))
 
-;;; ---------------------------------------------------------------------------
 
 (defun row-sums (matrix)
   (let* ((row-count (array-dimension matrix 1))
@@ -176,7 +169,6 @@ the sociological literature, where it is referred to as the network density
         (incf (aref result row) (aref matrix column row))))
     result))
 
-;;; ---------------------------------------------------------------------------
 
 (defun column-sums (matrix)
   (let* ((column-count (array-dimension matrix 0))
@@ -186,7 +178,6 @@ the sociological literature, where it is referred to as the network density
         (incf (aref result column) (aref matrix column row))))
     result))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod assortativity-coefficient ((matrix array))
   
@@ -197,7 +188,6 @@ the sociological literature, where it is referred to as the network density
       (values 1)
       (values (/ (- trace sum-squared) (- 1 sum-squared))))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod graph-edge-mixture-matrix ((graph basic-graph) vertex-classifier &key
                                 (edge-weight (constantly 1)))
@@ -226,7 +216,6 @@ the sociological literature, where it is referred to as the network density
      (0.013 0.023 0.306 0.035)
      (0.005 0.007 0.024 0.016)))
 
-;;; ---------------------------------------------------------------------------
 
 ;;OPT we call the classifier a lot, probably better to make a new ht for that
 

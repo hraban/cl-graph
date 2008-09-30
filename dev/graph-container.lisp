@@ -11,9 +11,7 @@ DISCUSSION
 
 (in-package #:metabang.graph)
 
-;;; ---------------------------------------------------------------------------
 ;;; class defs
-;;; ---------------------------------------------------------------------------
 
 (defclass* graph-container (iteratable-container-mixin
                             non-associative-container-mixin
@@ -29,7 +27,6 @@ DISCUSSION
   (:export-p t)
   (:documentation "A graph container is essentially an adjacency list graph representation [?? The Bad name comes from it being implemented with containers... ugh]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defclass* graph-container-edge (basic-edge)
   ((vertex-1 nil ir "`Vertex-1` is one of the two vertexes that an edge connects. In a directed-edge, `vertex-1` is also the `source-edge`.")
@@ -38,21 +35,18 @@ DISCUSSION
   (:export-p t)
   (:documentation "This is the root class for edges in graph-containers. It adds vertex-1 and vertex-2 slots."))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod print-object ((object graph-container-edge) stream)
   (print-unreadable-object (object stream :type t) 
     (format stream "<~A ~A ~A>" (vertex-1 object) (vertex-2 object) 
             (value object))))
 
-;;; ---------------------------------------------------------------------------
 
 (defclass* weighted-edge (weighted-edge-mixin graph-container-edge)
   ()
   (:export-p t)
   (:documentation "A weighted edge is both a weighted-edge-mixin and a graph-container-edge."))
 
-;;; ---------------------------------------------------------------------------
 
 (defclass* graph-container-vertex (basic-vertex)
   ((vertex-edges nil r))
@@ -61,36 +55,30 @@ DISCUSSION
     :vertex-edges-container-class 'vector-container)
   (:documentation "A graph container vertex keeps track of its edges in the the vertex-edges slot. The storage for this defaults to a vector-container but can be changed using the vertex-edges-container-class initarg."))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod make-vertex-edges-container ((vertex graph-container-vertex) 
                                         container-class &rest args)
   (apply #'make-container container-class args))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod initialize-instance :after ((object graph-container-vertex) &key
                                        vertex-edges-container-class)
   (setf (slot-value object 'vertex-edges)
         (make-vertex-edges-container object vertex-edges-container-class)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod make-vertex-container ((graph graph-container) initial-size) 
   (make-container 'simple-associative-container
                   :initial-size initial-size
                   :test (vertex-test graph)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod make-edge-container ((graph graph-container) initial-size) 
   (make-container 'vector-container :initial-size initial-size
                   :fill-pointer 0))
 
 
-;;; ---------------------------------------------------------------------------
 ;;; graph-container-directed-edge
-;;; ---------------------------------------------------------------------------
 
 (defclass* graph-container-directed-edge (directed-edge-mixin 
                                           graph-container-edge)
@@ -98,7 +86,6 @@ DISCUSSION
   (:export-p t)
   (:documentation "A graph-container-directed-edge is both a directed-edge-mixin and a graph-container-edge."))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod initialize-instance :after ((object graph-container-directed-edge)
                                        &key source-vertex target-vertex)
@@ -111,21 +98,16 @@ DISCUSSION
   (when target-vertex
     (setf (slot-value object 'vertex-2) target-vertex)))
 
-;;; ---------------------------------------------------------------------------
 ;;; vertex-1 is defined to be the source vertex of an undirected edge
-;;; ---------------------------------------------------------------------------
 
 (defmethod source-vertex ((edge graph-container-edge))
   (vertex-1 edge))
 
-;;; ---------------------------------------------------------------------------
 ;;; vertex-2 is defined to be the target vertex of an undirected edge
-;;; ---------------------------------------------------------------------------
 
 (defmethod target-vertex ((edge graph-container-edge))
   (vertex-2 edge))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod other-vertex ((edge graph-container-edge) 
                          (v graph-container-vertex))
@@ -137,13 +119,11 @@ DISCUSSION
         
         (t (error "Vertex ~A not part of Edge ~A" v edge))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod other-vertex ((edge graph-container-edge) 
                          (value t))
   (other-vertex edge (find-vertex edge value)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod add-edge ((graph graph-container) (edge graph-container-edge)
                      &key force-new?)
@@ -160,18 +140,15 @@ DISCUSSION
     (push edge (item-at-1 (vertex-pair->edge graph) (cons vertex-1 vertex-2))))
   edge)
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod add-edge-to-vertex :around ((edge graph-container-edge) 
                                        (vertex graph-container-vertex))
   (insert-item (vertex-edges vertex) edge))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod make-node-for-container ((graph graph-container) (node t) &key)
   (make-vertex-for-graph graph :element node))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod find-edge-between-vertexes ((graph graph-container) 
                                        (vertex-1 graph-container-vertex) 
@@ -186,7 +163,6 @@ DISCUSSION
              :vertex-1 vertex-1 :vertex-2 vertex-1))
     (first value)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod find-edge-between-vertexes-if ((graph graph-container) 
                                           (vertex-1 graph-container-vertex) 
@@ -202,7 +178,6 @@ DISCUSSION
              :vertex-1 vertex-1 :vertex-2 vertex-1))
     it))    
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod find-edge-between-vertexes-if ((graph graph-container) 
                                           (value-1 t) 
@@ -215,7 +190,6 @@ DISCUSSION
 	(when error-if-not-found?
 	  (error 'graph-edge-not-found-error :vertex-1 v1 :vertex-2 v2)))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod find-edge ((graph graph-container) (edge graph-container-edge)
                       &optional error-if-not-found?)
@@ -223,7 +197,6 @@ DISCUSSION
    graph (vertex-1 edge) (vertex-2 edge)
    :error-if-not-found? error-if-not-found?))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod delete-edge ((graph graph-container) (edge graph-container-edge))
   (let ((vertex-1 (vertex-1 edge))
@@ -244,25 +217,20 @@ DISCUSSION
   (empty! (vertex-pair->edge graph))
   graph)
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod empty! :after ((graph graph-container))
   (empty! (vertex-pair->edge graph)))
 
 
-;;; ---------------------------------------------------------------------------
 ;;; iteration
-;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-edges ((graph graph-container) fn)
   (iterate-elements (graph-edges graph) fn))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-edges ((vertex graph-container-vertex) fn)
   (iterate-elements (vertex-edges vertex) fn))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-source-edges ((vertex graph-container-vertex) fn)
   (iterate-elements (vertex-edges vertex)
@@ -271,7 +239,6 @@ DISCUSSION
                                 (eq vertex (source-vertex edge)))
                         (funcall fn edge)))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-target-edges ((vertex graph-container-vertex) fn)
   (iterate-elements (vertex-edges vertex)
@@ -280,33 +247,28 @@ DISCUSSION
                                 (eq vertex (target-vertex edge)))
                         (funcall fn edge)))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-children ((vertex graph-container-vertex) fn)
   (iterate-source-edges vertex
                         (lambda (edge)
                           (funcall fn (other-vertex edge vertex)))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-parents ((vertex graph-container-vertex) fn)
   (iterate-target-edges vertex
                         (lambda (edge)
                           (funcall fn (other-vertex edge vertex)))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod iterate-neighbors ((vertex graph-container-vertex) fn)
   (iterate-edges vertex
                  (lambda (edge)
                    (funcall fn (other-vertex edge vertex)))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod vertexes ((edge graph-container-edge))
   (collect-using #'iterate-vertexes nil edge))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod has-children-p ((vertex graph-container-vertex))
   (iterate-target-edges vertex
@@ -315,7 +277,6 @@ DISCUSSION
                           (return-from has-children-p t)))
   (values nil))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod has-parent-p ((vertex graph-container-vertex))
   (iterate-source-edges vertex
@@ -324,7 +285,6 @@ DISCUSSION
                           (return-from has-parent-p t)))
   (values nil))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod vertices-share-edge-p ((vertex-1 graph-container-vertex) 
                                   (vertex-2 graph-container-vertex))
@@ -342,7 +302,6 @@ DISCUSSION
   
   (values nil))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod edge-count ((graph graph-container))
   (size (graph-edges graph)))

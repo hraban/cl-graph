@@ -28,15 +28,12 @@
             poisson-vertex-degree-distribution
             power-law-vertex-degree-distribution)))
 
-;;; ---------------------------------------------------------------------------
 ;;; classes
-;;; ---------------------------------------------------------------------------
 
 (defclass* generated-graph-mixin ()
   ((generation-method nil ir)
    (random-seed nil ir)))
 
-;;; ---------------------------------------------------------------------------
 
 (defun save-generation-information (graph generator method)
   ;; No
@@ -48,26 +45,21 @@
   (setf (slot-value graph 'generation-method) method
         (slot-value graph 'random-seed) (random-seed generator)))
 
-;;; ---------------------------------------------------------------------------
 
 (defun simple-group-id-generator (kind count) 
   (form-keyword "H" (format nil "~2,'0D~4,'0D" kind count)))
 
-;;; ---------------------------------------------------------------------------
 
 (defun simple-group-id-parser (vertex) 
   (parse-integer (subseq (symbol-name (element vertex)) 1 3)))
 
 
-;;; ---------------------------------------------------------------------------
 ;;; generate-gnp
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-gnp (generator (graph-class symbol) n p &key (label 'identity))
   (generate-gnp
    generator (make-instance graph-class) n p :label label))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-gnp (generator (graph basic-graph) n p &key (label 'identity))
   (let ((v 1)
@@ -88,15 +80,12 @@
     
     graph))
 
-;;; ---------------------------------------------------------------------------
 ;;; generate-gnm
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-gnm (generator (graph-class symbol) n p &key (label 'identity))
   (generate-gnm
    generator (make-instance graph-class) n p :label label))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-gnm (generator (graph basic-graph) n m &key (label 'identity))
   (let ((max-edge-index (1- (combination-count n 2))))
@@ -125,12 +114,10 @@
            'graph-container 10000 (floor (* 0.0001 (combination-count 10000 2)))))
   )
         
-;;; ---------------------------------------------------------------------------
          
 (defun vertex-group (v)
   (aref (symbol-name (element v)) 1))
 
-;;; ---------------------------------------------------------------------------
 
 (defun in-group-degree (v &key (key 'vertex-group))
   (vertex-degree 
@@ -138,12 +125,10 @@
                     (declare (ignore e))
                     (in-same-group-p v ov key))))
 
-;;; ---------------------------------------------------------------------------
 
 (defun in-same-group-p (v1 v2 key)
   (eq (funcall key v1) (funcall key v2)))
 
-;;; ---------------------------------------------------------------------------
 
 (defun out-group-degree (v &key (key 'vertex-group))
   (vertex-degree 
@@ -151,9 +136,7 @@
                     (declare (ignore e))
                     (not (in-same-group-p v ov key)))))
 
-;;; ---------------------------------------------------------------------------
 ;;; generate-undirected-graph-via-assortativity-matrix 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-undirected-graph-via-assortativity-matrix
            (generator (graph-class symbol) size edge-count 
@@ -164,7 +147,6 @@
    kind-matrix assortativity-matrix vertex-creator
    :duplicate-edge-function duplicate-edge-function))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-undirected-graph-via-assortativity-matrix
            (generator graph size edge-count 
@@ -217,9 +199,7 @@
       
       (values graph)))
 
-;;; ---------------------------------------------------------------------------
 ;;; generate-undirected-graph-via-verex-probabilities
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-undirected-graph-via-vertex-probabilities
            (generator (graph-class symbol) size 
@@ -228,7 +208,6 @@
    generator (make-instance graph-class) size 
    kind-matrix probability-matrix vertex-creator))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-undirected-graph-via-vertex-probabilities
            (generator graph size 
@@ -360,7 +339,6 @@
  (lambda (kind count) 
    (form-keyword "H" (format nil "~2,'0D~4,'0D" kind count))))
 
-;;; ---------------------------------------------------------------------------
 
 (defun sample-edges-of-same-kind (generator n p fn)
   (when (plusp p)
@@ -379,7 +357,6 @@
 #+Test
 (sample-edges-of-same-kind *random-generator* 10 0.2 (lambda (a b) (print (list a b))))
 
-;;; ---------------------------------------------------------------------------
 
 (defun sample-edges-of-different-kinds (generator rows cols p fn)
   (when (plusp p)
@@ -395,7 +372,6 @@
               (when (< v rows) 
                 (funcall fn v w))))))) 
 
-;;; ---------------------------------------------------------------------------
 
 (defun poisson-vertex-degree-distribution (z k)
   (/ (* (expt z k) (expt cl-mathstats:+e+ (- z)))
@@ -406,20 +382,17 @@ We know the probability of finding a vertex of degree k is p_k. We want to sampl
 from this distribution
 |#
 
-;;; ---------------------------------------------------------------------------
 
 (defun power-law-vertex-degree-distribution (kappa k)
   (* (- 1 (expt cl-mathstats:+e+ (- (/ kappa)))) 
      (expt cl-mathstats:+e+ (- (/ k kappa)))))
 
-;;; ---------------------------------------------------------------------------
 
 (defun create-specified-vertex-degree-distribution (degrees)
   (lambda (z k)
     (declare (ignore z k))
     degrees))
 
-;;; ---------------------------------------------------------------------------
 
 (defun make-degree-sampler (p_k &key (generator *random-generator*)
                                 (max-degree 1000)
@@ -441,7 +414,6 @@ from this distribution
     (lambda ()
       (first (next-element wsc)))))
 
-;;; ---------------------------------------------------------------------------
 
 #+Old
 (defun sample-edges-for-assortative-graph (generator edge-count assortativity-matrix)
@@ -455,14 +427,12 @@ from this distribution
     (loop repeat edge-count collect
           (next-element c))))
 
-;;; ---------------------------------------------------------------------------
 
 (defun sample-edges-for-assortative-graph (generator edge-count assortativity-matrix)
   (let ((s (make-edge-sampler-for-assortative-graph generator assortativity-matrix)))
     (loop repeat edge-count collect
           (funcall s))))
 
-;;; ---------------------------------------------------------------------------
 
 (defun make-edge-sampler-for-assortative-graph (generator assortativity-matrix)
   (let ((c (make-container 'weighted-sampling-container
@@ -474,7 +444,6 @@ from this distribution
         (insert-item c (list i j))))
     (lambda () (next-element c))))
 
-;;; ---------------------------------------------------------------------------
 
 (defun sample-vertexes-for-mixed-graph (generator size kind-matrix)
   (cond ((every-element-p kind-matrix (lambda (x) (fixnump x)))
@@ -554,9 +523,7 @@ from this distribution
             mixing-matrix)))
 
 
-;;; ---------------------------------------------------------------------------
 ;;; girvan-newman-test-graphs
-;;; ---------------------------------------------------------------------------
 
 (defun generate-girvan-newman-graph (generator graph-class z-in)
   (warn "This is broken!")
@@ -649,12 +616,10 @@ from this distribution
   
   (values g)))
 
-;;; ---------------------------------------------------------------------------
 
 (defun gn-id->group (id)
   (parse-integer (subseq (symbol-name id) 1 2)))
 
-;;; ---------------------------------------------------------------------------
 
 (defun collect-edge-counts (g)
   (let ((vertexes (make-container 'simple-associative-container 
@@ -679,13 +644,11 @@ from this distribution
      #'string-lessp
      :key #'first)))
 
-;;; ---------------------------------------------------------------------------
 
 (defclass* weighted-sampler-with-lookup-container ()
   ((sampler nil r)
    (lookup nil r)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod initialize-instance :after ((object weighted-sampler-with-lookup-container)
                                        &key random-number-generator key)
@@ -696,7 +659,6 @@ from this distribution
         (slot-value object 'lookup)
         (make-container 'simple-associative-container)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod insert-item ((container weighted-sampler-with-lookup-container)
                         (item t))
@@ -705,25 +667,21 @@ from this distribution
     (assert (not (null node)))
     (setf (item-at-1 (lookup container) item) node)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod find-node ((container weighted-sampler-with-lookup-container)
                       (item t))
   (item-at-1 (lookup container) item))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod delete-node ((container weighted-sampler-with-lookup-container)
                         (node t))
   ;; not going to worry about the hash table
   (delete-node (sampler container) node))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod next-element ((container weighted-sampler-with-lookup-container))
   (next-element (sampler container)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-scale-free-graph
            (generator graph size kind-matrix add-edge-count
@@ -784,7 +742,6 @@ from this distribution
       
       graph)))
 
-;;; ---------------------------------------------------------------------------
 
 #+Test
 (defun poisson-connector (count generator)
@@ -1082,14 +1039,11 @@ generate-scale-free-graph <t> <t> <t> <t> <t> <t> <t>        2%      2%    1,700
 
 |#
 
-;;; ---------------------------------------------------------------------------
 ;;; generate-assortative-graph-with-degree-distributions
-;;; ---------------------------------------------------------------------------
 
 #+Ignore
 (define-debugging-class generate-assortative-graph-with-degree-distributions ())
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-assortative-graph-with-degree-distributions
            (generator (graph-class symbol)
@@ -1285,9 +1239,7 @@ Split into a function to compute some of the intermediate pieces and one to use 
        (0.2222222222222222 0.4444444444444444))))
  :test #'eq)
 
-;;; ---------------------------------------------------------------------------
 ;;; generate-graph-by-resampling-edges
-;;; ---------------------------------------------------------------------------
 
 #|
 doesn't take edge weights into account when sampling
@@ -1299,12 +1251,10 @@ should include pointer back to original graph
   ((generator nil ir)
    (graph nil ir)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod next-element ((sampler basic-edge-sampler))
   (sample-element (graph-edges (graph sampler)) (generator sampler)))
 
-;;; ---------------------------------------------------------------------------
 
 (defclass* weighted-edge-sampler (basic-edge-sampler)
   ((weight-so-far 0 a)
@@ -1312,7 +1262,6 @@ should include pointer back to original graph
    (edge-iterator nil r)
    (size nil ir)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod initialize-instance :after ((object weighted-edge-sampler) &key)
   (let ((generator (generator object))
@@ -1329,7 +1278,6 @@ should include pointer back to original graph
           (slot-value object 'edge-iterator) 
           (make-iterator (graph-edges (graph object))))))
        
-;;; ---------------------------------------------------------------------------
 
 (defmethod next-element ((object weighted-edge-sampler))
   (let ((edge-iterator (edge-iterator object))
@@ -1420,22 +1368,18 @@ should include pointer back to original graph
                       (generate-graph-by-resampling-edges
                        *random-generator* g 'weighted-edge-sampler (edge-count g)))))))))
 
-;;; ---------------------------------------------------------------------------
 ;;; some preferential attachment algorithms 
-;;; ---------------------------------------------------------------------------
 
 #+Ignore
 (define-debugging-class generate-preferential-attachment-graph
   (graph-generation))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-simple-preferential-attachment-graph
            (generator (graph-class symbol) size minimum-degree)
   (generate-simple-preferential-attachment-graph
    generator (make-instance graph-class) size minimum-degree))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-simple-preferential-attachment-graph
            (generator graph size minimum-degree)
@@ -1467,7 +1411,6 @@ should include pointer back to original graph
    :sort #'>
    :sort-on :values)
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-preferential-attachment-graph
            (generator (graph-class symbol) size kind-matrix minimum-degree 
@@ -1480,7 +1423,6 @@ should include pointer back to original graph
    :vertex-labeler vertex-labeler
    :duplicate-edge-function duplicate-edge-function))
 
-;;; ---------------------------------------------------------------------------
   
 (defmethod generate-preferential-attachment-graph
            (generator (graph basic-graph) size kind-matrix minimum-degree 
@@ -1600,7 +1542,6 @@ should include pointer back to original graph
     
     graph))
 
-;;; ---------------------------------------------------------------------------
 
 (defun make-edge-sampler-for-preferential-attachment-graph (generator assortativities)
   (let ((c (make-container 'weighted-sampling-container
@@ -1654,7 +1595,6 @@ should include pointer back to original graph
        (0.02 0.25 0.25)
        (0.02 0.25 0.25))))
 
-;;; ---------------------------------------------------------------------------
 
 
 (defmethod generate-acquaintance-network 
@@ -1677,7 +1617,6 @@ should include pointer back to original graph
          generator graph death-probability duplicate-edge-function)) 
   (values graph))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod generate-acquaintance-network-until-stable 
            (generator graph size death-probability step-count 
@@ -1696,7 +1635,6 @@ should include pointer back to original graph
   
   (values graph))
 
-;;; ---------------------------------------------------------------------------
 
 (defun add-acquaintance-and-maybe-kill-something 
        (generator graph death-probability duplicate-edge-function)

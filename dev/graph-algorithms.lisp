@@ -1,15 +1,12 @@
 (in-package #:metabang.graph)
 
-;;; ---------------------------------------------------------------------------
 ;;;
-;;; ---------------------------------------------------------------------------
 
 (defstruct (vertex-datum (:conc-name node-) (:type list))
   (color nil)
   (depth most-positive-fixnum)
   (parent nil))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod initialize-vertex-data ((graph basic-graph))
   (let ((vertex-data (make-container 'simple-associative-container)))
@@ -18,14 +15,11 @@
                                     (make-vertex-datum :color :white))))
     (values vertex-data)))
   
-;;; ---------------------------------------------------------------------------
 ;;; breadth-first-search by GWK
-;;; ---------------------------------------------------------------------------
 
 (defmethod breadth-first-visitor ((graph basic-graph) (source t) fn)
   (breadth-first-visitor graph (find-vertex graph source) fn))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod breadth-first-visitor ((graph basic-graph) (source basic-vertex) fn)
   ;; initialize
@@ -57,12 +51,10 @@
       
       vertex-data)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod breadth-first-search-graph ((graph basic-graph) (source t))
   (breadth-first-search-graph graph (find-vertex graph source)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod breadth-first-search-graph ((graph basic-graph) (source basic-vertex))
   ;; initialize
@@ -93,9 +85,7 @@
       
       vertex-data)))
     
-;;; ---------------------------------------------------------------------------
 ;;; single-source-shortest-paths - gwk
-;;; ---------------------------------------------------------------------------
 
 #+NotYet
 (defmethod single-source-shortest-paths ((graph basic-graph))
@@ -105,9 +95,7 @@
       (setf (node-depth source-datum) 0))
     ))
 
-;;; ---------------------------------------------------------------------------
 ;;; connected-components - gwk
-;;; ---------------------------------------------------------------------------
 
 (defmethod connected-components ((graph basic-graph))
   (let ((union (make-container 'union-find-container)))
@@ -124,7 +112,6 @@
     (iterate-elements union 'find-set)
     union))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod connected-component-count ((graph basic-graph))
   ;;?? Gary King 2005-11-28: Super ugh
@@ -168,9 +155,7 @@
 
 
          
-;;; ---------------------------------------------------------------------------
 ;;; minimum-spanning-tree based on kruskal's algorithm detailed in clrs2 -jjm
-;;; ---------------------------------------------------------------------------
 
 (defmethod mst-find-set ((vertex basic-vertex))
   #+ignore
@@ -180,18 +165,15 @@
     (setf (previous-node vertex) (mst-find-set (previous-node vertex))))
   (previous-node vertex))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod mst-make-set ((vertex basic-vertex))
   (setf (previous-node vertex) vertex
         (rank vertex) 0))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod mst-tree-union ((v1 basic-vertex) (v2 basic-vertex))
   (mst-link (mst-find-set v1) (mst-find-set v2)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod mst-link ((v1 basic-vertex) (v2 basic-vertex))
   (cond ((> (rank v1) (rank v2))
@@ -200,11 +182,9 @@
            (when (= (rank v1) (rank v2))
              (incf (rank v2))))))
 
-;;; ---------------------------------------------------------------------------
 ;;; jjm's implementation of mst depends on this
 ;;; todo - figure out some what to add and edge we create to a graph rather
 ;;; than always using add-edge-between-vertexes interface
-;;; ---------------------------------------------------------------------------
 
 (defmethod add-edges-to-graph ((graph basic-graph) (edges list) 
                                &key (if-duplicate-do :ignore))
@@ -227,14 +207,11 @@
         :if-duplicate-do if-duplicate-do))))
   graph)
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod edge-lessp-by-weight ((e1 basic-edge) (e2 basic-edge))
   (< (weight e1) (weight e2)))
 
-;;; ---------------------------------------------------------------------------
 ;;; minumum spanning tree
-;;; ---------------------------------------------------------------------------
 
 
 (defmethod minimum-spanning-tree ((graph basic-graph) 
@@ -260,7 +237,6 @@
                   (values t result))
                  (t (values nil result)))))))
 
-;;; ---------------------------------------------------------------------------
 
 #+ignore ;;; shoot
 (defmethod minimum-spanning-tree ((vertex-list list) 
@@ -296,16 +272,13 @@
                   (values t result))
                  (t (values nil result)))))))
 
-;;; ---------------------------------------------------------------------------
 ;;; uses mst to determine if the graph is connected
-;;; ---------------------------------------------------------------------------
 
 (defmethod connected-graph-p ((graph basic-graph) &key 
                               (edge-sorter 'edge-lessp-by-weight))
   (minimum-spanning-tree graph :edge-sorter edge-sorter))
 
   
-;;; ---------------------------------------------------------------------------
 
 #+test
 (let ((g (make-container 'graph-container)))
@@ -320,11 +293,9 @@
                              :if-duplicate-do :force)
   (minimum-spanning-tree g))
 
-;;; ---------------------------------------------------------------------------
 ;;; GWK's implementation of kruskal's - slightly faster, but it doesn't return 
 ;;; a tree (still faster even if it does).  Will decide later if which to use
 ;;; ignoring for now -jjm
-;;; ---------------------------------------------------------------------------
 
 #+not-yet
 (defmethod minimum-spanning-tree ((graph basic-graph) &key (weight 'weight))
@@ -342,7 +313,6 @@
     
     (values a)))
 
-;;; ---------------------------------------------------------------------------
 
 #+test
 (loop for f in '(mst-kruskal minimum-spanning-tree-kruskal) do
@@ -361,26 +331,18 @@
                                        (declare (ignore a b))
                                        0)))))))
 
-;;; ---------------------------------------------------------------------------
 ;;; end minimum spanning tree
-;;; ---------------------------------------------------------------------------
 
     
-;;; ---------------------------------------------------------------------------
 ;;; depth-first-search - clrs2
 ;;; todo - figure out how to name this depth-first-search, which is already
 ;;; defined in search.lisp
-;;; ---------------------------------------------------------------------------
 
-;;; ---------------------------------------------------------------------------
 ;;; should probably make this special
-;;; ---------------------------------------------------------------------------
 
 (defparameter *depth-first-search-timer* -1)
 
-;;; ---------------------------------------------------------------------------
 ;;; undirected edges are less than edges that are directed
-;;; ---------------------------------------------------------------------------
 
 #+ignore ;;; incorrect, methinks - jjm
 (defmethod edge-lessp-by-direction ((e1 basic-edge) (e2 basic-edge))
@@ -394,7 +356,6 @@
 (defmethod edge-lessp-by-direction ((e1 basic-edge) (e2 basic-edge))
   (and (undirected-edge-p e1) (directed-edge-p e2)))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod out-edge-for-vertex-p ((edge basic-edge) (vertex basic-vertex))
   (cond ((and (directed-edge-p edge)
@@ -406,15 +367,12 @@
          t)
         (t nil)))
 
-;;; ---------------------------------------------------------------------------
 ;;; depth-first-search
-;;; ---------------------------------------------------------------------------
                                                   
 (defmethod dfs ((graph basic-graph) (root t) fn &key 
                 (out-edge-sorter #'edge-lessp-by-direction))
   (dfs graph (find-vertex graph root) fn :out-edge-sorter out-edge-sorter))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod dfs ((graph basic-graph) (root basic-vertex) fn &key
                 (out-edge-sorter #'edge-lessp-by-direction))
@@ -442,7 +400,6 @@
    (sort (copy-list (vertexes graph)) #'< :key #'finish-time)
    graph))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod dfs-visit ((graph graph-container) (u basic-vertex)
                                      fn sorter)
@@ -472,9 +429,7 @@
   (setf (color u) :black
         (finish-time u) *depth-first-search-timer*))
 
-;;; ---------------------------------------------------------------------------
 ;;; from clrs2
-;;; ---------------------------------------------------------------------------
 
 #+test
 (let ((g (make-container 'graph-container)))
@@ -490,19 +445,15 @@
   (assert (equal '(:X :Y :V :U :Z :W)
                  (mapcar #'element (dfs g :u #'identity)))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod dfs-tree-edge-p ((edge graph-container-edge))
   (eql (color edge) :white))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod dfs-back-edge-p ((edge graph-container-edge))
   (eql (color edge) :gray))
 
-;;; ---------------------------------------------------------------------------
 ;;; not correct - has to look at combination of discovery-time and finish-time
-;;; ---------------------------------------------------------------------------
 
 (defmethod dfs-forward-edge-p ((edge graph-container-edge))
   (warn "implementation is not correct.")
@@ -511,9 +462,7 @@
     (< (discovery-time (source-vertex edge))
        (discovery-time (target-vertex edge)))))
 
-;;; ---------------------------------------------------------------------------
 ;;; not correct - has to look at combination of discovery-time and finish-time
-;;; ---------------------------------------------------------------------------
 
 (defmethod dfs-cross-edge-p ((edge graph-container-edge))
   (warn "implementation is not correct.")
@@ -522,7 +471,6 @@
     (> (discovery-time (source-vertex edge))
        (discovery-time (target-vertex edge)))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod dfs-edge-type ((edge graph-container-edge))
   (cond ((dfs-tree-edge-p edge)
@@ -535,17 +483,11 @@
          :cross)
         (t nil)))
 
-;;; ---------------------------------------------------------------------------
 ;;; end dfs
-;;; ---------------------------------------------------------------------------
 
-;;; ---------------------------------------------------------------------------
 ;;; mapping functions
-;;; ---------------------------------------------------------------------------
 
-;;; ---------------------------------------------------------------------------
 ;;; over vertexes
-;;; ---------------------------------------------------------------------------
 
 (defmethod map-over-all-combinations-of-k-vertexes ((graph basic-graph) k fn)
   (let* ((vertex-count (size graph))
@@ -559,7 +501,6 @@
                                (nth-element vertexes vertex-index))
                              vertex-indexes)))))))
 
-;;; ---------------------------------------------------------------------------
 
 #+test
 (let ((result nil)
@@ -581,10 +522,8 @@
          (push graph-from-vertexes result)))))
   result)
 
-;;; ---------------------------------------------------------------------------
 ;;; over edges 
 ;;; todo: merge these two defs
-;;; ---------------------------------------------------------------------------
 
 (defmethod map-over-all-combinations-of-k-edges ((graph basic-graph) k fn)
   (let* ((edge-count (edge-count graph))
@@ -599,7 +538,6 @@
                                (nth-element edges edge-index))
                              edge-indexes)))))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod map-over-all-combinations-of-k-edges ((vertex basic-vertex) k fn)
   (let* ((edge-count (edge-count vertex))
@@ -613,7 +551,6 @@
          (funcall fn (mapcar (lambda (edge-index)
                                (nth-element edges edge-index))
                              edge-indexes)))))))
-;;; ---------------------------------------------------------------------------
 
 #+test
 (map-over-all-combinations-of-k-edges 

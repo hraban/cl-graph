@@ -1,18 +1,14 @@
 (in-package #:cl-graph)
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric make-vertex-container (graph initial-size)
   (:documentation "Make-vertex-container is called during graph creation and can be used to create specialized containers to hold graph vertexes."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric make-edge-container (graph initial-size)
   (:documentation "Make-edge-container is called during graph creation and can be used to create specialized containers to hold graph edges."))
 
-;;; ---------------------------------------------------------------------------
 ;;; API
-;;; ---------------------------------------------------------------------------
 
 (defgeneric make-graph (graph-type &key &allow-other-keys)
   (:documentation "Create a new graph of type `graph-type'. Graph type can be 
@@ -21,18 +17,15 @@ different classes. If graph-type is a list, then a class which has all of the li
 classes as superclasses will be found (or created). In either case, the new graph will
 be created as if with a call to make-instance."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric make-edge-for-graph (graph vertex-1 vertex-2 
                                        &key edge-type edge-class &allow-other-keys)
   (:documentation "It should not usually necessary to call this in user code. Creates a new edge between vertex-1 and vertex-2 for the graph. If the edge-type and edge-class are not specified, they will be determined from the defaults of the graph."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric add-edge (graph edge &rest args &key force-new?)
   (:documentation "Add-edge adds an existing edge to a graph. As add-edge-between-vertexes is generally more natural to use, this method is rarely called."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric add-edge-between-vertexes (graph value-or-vertex-1 value-or-vertex-2
                                               &rest args &key if-duplicate-do
@@ -54,23 +47,19 @@ the previously added edge is returned; if it is :force, then another edge is
 added between the two vertexes; if it is a function, then this function will
 be called with the previous edge."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric delete-edge (graph edge)
   (:documentation "Delete the `edge' from the `graph' and returns it."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric delete-edge-between-vertexes (graph value-or-vertex-1
                                                 value-or-vertex-2 &rest args)
   (:documentation "Finds an edge in the graph between the two specified vertexes. If values (i.e., non-vertexes) are passed in, then the graph will be searched for matching vertexes."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric add-vertex (graph value-or-vertex &key if-duplicate-do &allow-other-keys)
   (:documentation  "Adds a vertex to a graph. If called with a vertex, then this vertex is added. If called with a value, then a new vertex is created to hold the value. If-duplicate-do can be one of :ignore, :force, :replace, :replace-value or a function. The default is :ignore."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric delete-vertex (graph value-or-vertex)
   (:documentation "Remove a vertex from a graph. The 'vertex-or-value' argument can be
@@ -78,124 +67,100 @@ a vertex of the graph or a 'value' that will find a vertex via a call to find-ve
 graph-vertex-not-found-error will be raised if the vertex is not found or is not part of
 the graph."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric find-vertex (graph value &optional error-if-not-found?)
   (:documentation "Search 'graph' for a vertex with element 'value'. The search is fast but inflexible because it uses an associative-container. If you need more flexibity, see search-for-vertex."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric search-for-vertex (graph value &key key test error-if-not-found?)
   (:documentation "Search 'graph' for a vertex with element 'value'. The 'key' function is applied to each element before that element is compared with the value. The comparison is done using the function 'test'. If you don't need to use key or test, then consider using find-vertex instead."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric find-edge (graph edge &optional error-if-not-found?)
   (:documentation "Search `graph` for an edge whose vertexes match `edge`. This means that `vertex-1` of the edge in the graph must match `vertex-1` of `edge` and so forth. Wil signal an error of type `graph-edge-not-found-error` unless `error-if-not-found?` is nil. [?? Unused. Remove?]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric find-edge-between-vertexes (graph value-or-vertex-1 value-or-vertex-2
                                               &key error-if-not-found?)
   (:documentation "Searches `graph` for an edge that connects vertex-1 and vertex-2.  [?? Ignores error-if-not-found? Does directedness matter? need test]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric source-vertex (edge)
   (:documentation "Returns the source-vertex of a directed edge. Compare with `vertex-1`."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric target-vertex (edge)
   (:documentation "Returns the target-vertex of a directed edge. Compare with `vertex-2`."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric iterate-edges (graph-or-vertex fn)
   (:documentation "Calls `fn` on each edge of graph or vertex."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric iterate-source-edges (vertex fn)
   (:documentation "In a directed graph, calls `fn` on each edge of a vertex that begins at vertex. In an undirected graph, this is equivalent to `iterate-edges`."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric iterate-target-edges (vertex fn)
   (:documentation "In a directed graph, calls `fn` on each edge of a vertex that ends at vertex. In an undirected graph, this is equivalent to `iterate-edges`."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric iterate-children (vertex fn)
   (:documentation "Calls fn on every vertex that is either connected to vertex by an undirected edge or is at the target end of a directed edge."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric has-children-p (vertex)
   (:documentation "In a directed graph, returns true if vertex has any edges that point from vertex to some other vertex (cf. iterate-target-edges). In an undirected graph, `has-children-p` is testing only whether or not the vertex has any edges."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric has-parent-p (vertex)
   (:documentation "In a directed graph, returns true if vertex has any edges that point from some other vertex to this vertex (cf. iterate-source-edges). In an undirected graph, `has-parent-p` is testing only whether or not the vertex has any edges."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric iterate-parents (vertex fn)
   (:documentation "Calls fn on every vertex that is either connected to vertex by an undirected edge or is at the source end of a directed edge."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric iterate-neighbors (vertex fn)
   (:documentation "Calls fn on every vertex adjecent to vertex See also iterate-children and iterate-parents."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric renumber-vertexes (graph)
   (:documentation "Assign a number to each vertex in a graph in some unspecified order. [?? internal]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric renumber-edges (graph)
   (:documentation "Assign a number to each edge in a graph in some unspecified order. [?? internal]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric generate-directed-free-tree (graph root)
   (:documentation "Returns a version of graph which is a directed free tree
 rooted at root."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric in-undirected-cycle-p (graph start-vertex &optional marked previous)
   (:documentation "Return true if-and-only-if an undirected cycle in graph is reachable from start-vertex."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric undirected-edge-p (edge)
   (:documentation "Returns true if-and-only-if edge is undirected"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric directed-edge-p (edge)
   (:documentation "Returns true if-and-only-if edge is directed"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric tagged-edge-p (edge)
   (:documentation "Returns true if-and-only-if edge's tag slot is t"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric untagged-edge-p (edge)
   (:documentation "Returns true if-and-only-if edge's tage slot is nil"))
           
-;;; ---------------------------------------------------------------------------
 
 (defgeneric adjacentp (graph vertex-1 vertex-2)
   (:documentation "Return true if vertex-1 and vertex-2 are connected by an edge. [?? compare with vertices-share-edge-p and remove one or maybe call one directed-adjacentp]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric make-filtered-graph (old-graph test-fn &key
 					   graph-completion-method depth
@@ -240,14 +205,12 @@ one link away from the source).  The default value is NIL, indicating
 that all vertexes are to be included, no matter their depth.  This
 value is ignored in non closure options."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric project-bipartite-graph  
   (new-graph existing-graph vertex-class vertex-classifier)
   (:documentation "Creates the unimodal bipartite projects of existing-graph with
 vertexes for each vertex of existing graph whose `vertex-classifier` is eq to `vertex-class` and where an edge existing between two vertexes of the graph if and only if they are connected to a shared vertex in the existing-graph."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric assortativity-coefficient (mixing-matrix)
   (:documentation "An assortative graph is one where vertexes of the same type are more likely to 
@@ -256,7 +219,6 @@ assortative a graph is based on its mixing matrix. The definition we use is from
 Mixing Patterns in Networks by Mark Newman. See the citation 'newman200-mixing' in moab 
 or the URL 'http://arxiv.org/abs/cond-mat/0209450'."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric graph->dot (graph output
                        &key 
@@ -296,34 +258,28 @@ Here is an example;
 For more information about DOT file format, search the web for 'DOTTY' and 
 'GRAPHVIZ'."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric graph->dot-properties (g stream)
   (:documentation "Unless a different graph-formatter is specified, this method is called by graph->dot to output graph-properties onto a stream. The function can assume that the openning and closing brackets will be taken care of by the graph->dot."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric vertex->dot (vertex stream)
   (:documentation "Unless a different vertex-formatter is specified with a keyword argument, this is used by graph->dot to output vertex formatting for `vertex` onto the `stream`. The function can assume that openning and closing square brackets and label have already been taken care of."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric edge->dot (edge stream)
   (:documentation "Used by graph->dot to output edge formatting for `edge` onto the `stream`. The function can assume that openning and closing square brackets and label have already been taken care of."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric generate-gnm (generator graph n m &key)
   (:documentation "Generate a 'classic' random graph G(n, m) with n vertexes and m edges."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric generate-gnp (generator graph n p &key)
   (:documentation  "Generate the Erd\"os-R\'enyi random graph G\(n, p\). I.e., a graph with n vertexes where
 each possible edge appears with probability p. This implementation is from Efficient Generation
 of Large Random Networks \(see batagelj-generation-2005 in doab\)."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric generate-undirected-graph-via-assortativity-matrix 
   (generator graph-class size edge-count kind-matrix assortativity-matrix
@@ -335,7 +291,6 @@ The assortativity-matrix specifies the number of edges between vertexes of diffe
 
 The vertex-labeler is a function of two parameters: the vertex kind and the index. It should return whatever the 'value' of the vertex ought to be."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric generate-undirected-graph-via-vertex-probabilities 
   (generator graph-class size kind-matrix probability-matrix vertex-labeler)
@@ -351,7 +306,6 @@ called to create values for vertexes. It will be called only once for each verte
 The clever sequential sampling technique in this implementation is from Efficient Generation
 of Large Random Networks \(see batagelj-generation-2005 in moab\)."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric generate-scale-free-graph 
   (generator graph size kind-matrix add-edge-count
@@ -364,7 +318,6 @@ add-edge-count is the number of edges to add for each vertex;
 other-vertex-kind-samplers are confusing...; and
 vertex-labeler is used to create vertex elements \(as in other generators\)."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric generate-assortative-graph-with-degree-distributions
   (generator graph
@@ -375,14 +328,12 @@ vertex-labeler is used to create vertex elements \(as in other generators\)."))
              &key)
   (:documentation ""))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric generate-simple-preferential-attachment-graph (generator graph size minimum-degree)
   (:documentation "Generate a simple scale-free graph using the preferential attachment
 mechanism of Barabasi and Albert. The implementation is from Efficient Generation
 of Large Random Networks \(see batagelj-generation-2005 in moab\). Self-edges are possible."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric generate-preferential-attachment-graph 
   (generator graph size kind-matrix minimum-degree 
@@ -394,9 +345,7 @@ The idea behind this implementation is from Efficient Generation
 of Large Random Networks \(see batagelj-generation-2005 in moab\)."))
 
 
-;;; ---------------------------------------------------------------------------
 ;;; more
-;;; ---------------------------------------------------------------------------
 
 (defgeneric make-vertex-for-graph (graph &key &allow-other-keys)
   (:documentation "Creates a new vertex for graph `graph`. The keyword arguments include:
@@ -406,49 +355,40 @@ of Large Random Networks \(see batagelj-generation-2005 in moab\)."))
 
 and any other initialization arguments that make sense for the vertex class."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric tag-all-edges (thing)
   (:documentation "Sets the `tag` of all the edges of `thing` to true. [?? why does this exist?\]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric untag-all-edges (thing)
   (:documentation "Sets the `tag` of all the edges of `thing` to nil.  [?? why does this exist?\]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric untag-edges (edges)
   (:documentation "Sets the `tag` of all the edges of `thing` to true. [?? why does this exist?\]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric tag-edges (edges)
   (:documentation "Sets the `tag` of all the edges of `thing` to true. [?? why does this exist?\]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric replace-vertex (graph old new)
   (:documentation "Replace vertex `old` in graph `graph` with vertex `new`. The edge structure of the graph is maintained."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric add-edge-to-vertex (edge vertex)
   (:documentation "Attaches the edge `edge` to the vertex `vertex`."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric source-edges (vertex &optional filter)
   (:documentation "Returns a list of the source edges of `vertex`. I.e., 
 the edges that begin at `vertex`."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric target-edges (vertex &optional filter)
   (:documentation "Returns a list of the target edges of `vertex`. 
 I.e., the edges that end at `vertex`."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric child-vertexes (vertex &optional filter)
   (:documentation "Returns a list of the vertexes to which `vertex` 
@@ -456,92 +396,74 @@ is connected by an edge and for which `vertex` is the source vertex.
 If the connecting edge is undirected, then the vertex is always 
 counted as a source. [?? Could be a defun]."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric parent-vertexes (vertex &optional filter)
   (:documentation "Returns a list of the vertexes to which `vertex` is connected by an edge and for which `vertex` is the target vertex. If the connecting edge is undirected, then the vertex is always counted as a target. [?? Could be a defun]."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric neighbor-vertexes (vertex &optional filter)
   (:documentation "Returns a list of the vertexes to which `vertex` is connected by an edge disregarding edge direction. In a directed graph, neighbor-vertexes is the union of parent-vertexes and child-vertexes. [?? Could be a defun]."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric number-of-neighbors (vertex)
   (:documentation "Returns the number of neighbors of `vertex` (cf. `neighbor-vertexes`). [?? could be a defun]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric in-cycle-p (graph start-vertex)
   (:documentation "Returns true if `start-vertex` is in some cycle in `graph`. This uses child-vertexes to generate the vertexes adjacent to a vertex."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric iterate-vertexes (thing fn)
   (:documentation "Calls `fn` on each of the vertexes of `thing`."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric edges (thing)
   (:documentation "Returns a list of the edges of `thing`."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric vertex-count (graph)
   (:documentation "Returns the number of vertexes in `graph`. [?? could be a defun]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric vertexes (thing)
   (:documentation "Returns a list of the vertexes of `thing`."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric source-edge-count (vertex)
   (:documentation "Returns the number of source edges of vertex (cf. source-edges). [?? could be a defun]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric target-edge-count (vertex)
   (:documentation "Returns the number of target edges of vertex (cf. target-edges). [?? could be a defun]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric graph-roots (graph)
   (:documentation "Returns a list of the roots of graph. A root is defined as a vertex with no source edges \(i.e., all of the edges are out-going\). (cf. rootp) [?? could be a defun]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric rootp (vertex)
   (:documentation "Returns true if `vertex` is a root vertex \(i.e., it has no incoming \(source\) edges\)."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric find-vertex-if (thing predicate &key key)
   (:documentation "Returns the first vertex in `thing` for which the `predicate` function returns non-nil. If the `key` is supplied, then it is applied to the vertex before the predicate is."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric find-edge-if (graph fn &key key)
   (:documentation "Returns the first edge in `thing` for which the `predicate` function returns non-nil. If the `key` is supplied, then it is applied to the edge before the predicate is."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric find-edges-if (thing predicate)
   (:documentation "Returns a list of edges in `thing` for which the `predicate` returns non-nil. [?? why no key function?]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric find-vertexes-if (thing predicate)
   (:documentation "Returns a list of vertexes in `thing` for which the `predicate` returns non-nil. [?? why no key function?]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric force-undirected (graph)
   (:documentation "Ensures that the graph is undirected (possibly by calling change-class on the edges)."))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric traverse-elements (thing style fn)
   (:documentation "WIP"))
@@ -667,7 +589,6 @@ counted as a source. [?? Could be a defun]."))
 (defgeneric subgraph-containing (graph vertex &key)
   (:documentation "Returns a new graph that is a subset of `graph` that contains `vertex` and all of the other vertexes that can be reached from vertex by paths of less than or equal of length `depth`. If depth is not specified, then the entire sub-graph reachable from vertex will be returned. [?? Edge weights are always assumed to be one.]"))
 
-;;; ---------------------------------------------------------------------------
 
 (defgeneric weight (edge)
   (:documentation "Returns the weight of an edge. This defaults to 1.0 and can only be altered if the edge is a sub-class of `weighted-edge-mixin`."))

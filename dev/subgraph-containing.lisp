@@ -3,9 +3,7 @@
 (in-package #:cl-graph)
 
 
-;;; ---------------------------------------------------------------------------
 ;;; make-filtered-graph
-;;; ---------------------------------------------------------------------------
 
 (defmethod complete-links ((new-graph basic-graph) 
                            (old-graph basic-graph))
@@ -54,7 +52,6 @@
                                            :value (value edge)
                                            :edge-type edge-type))))))))))
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod make-filtered-graph ((old-graph basic-graph)
                                 test-fn
@@ -84,7 +81,6 @@
        (complete-links new-graph old-graph)))
   new-graph)
 
-;;; ---------------------------------------------------------------------------
 
 (defmethod subgraph-containing ((graph basic-graph) (vertex basic-vertex)
                                 &rest args &key (depth nil) (new-graph nil))
@@ -96,9 +92,7 @@
 	 :graph-completion-method :complete-closure-with-links
 	 args))
 
-;;; ---------------------------------------------------------------------------
 ;;; for completeness 
-;;; ---------------------------------------------------------------------------
 
 (defmethod make-graph-from-vertexes ((vertex-list list))
   (bind ((edges-to-keep nil)
