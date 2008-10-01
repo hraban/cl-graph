@@ -1,0 +1,31 @@
+A significant portion of almost any non-trivial programming
+effort goes into the manipulation of structured data. Many
+data structures can be viewed as containers. These may be
+ordered or unordered, associative (indexed) or sequential and
+so forth. The power and beauty of some programming languages
+derives in no small part from their ability to handle
+container classes well (Smalltalk comes to mind) and other
+languages have gone to great lengths to incorporate flexible
+containers into their frameworks (C++'s STL for example).
+Although Common Lisp includes a number of *containers*
+(hash-tables, lists and arrays) there are many useful data
+structures that are not built-in (e.g., binary search trees)
+and the existing containers have a fragmented interface that
+shows Lisp's peripatetic evolution.
+
+The Common Lisp Container Library ({clcl}) extends Lisp in two
+ways: it adds new container functionality and, by
+standardizing container interfaces, it makes using them
+significantly easier. The standard interface also lends
+itself to more a flexible design and development process
+since data structure decisions are easier to change as the
+program evolves. {clcl}~ thereby expends the power of Lisp and
+makes it an even better tool for both rapid prototyping
+\emph{and} production code.
+
+The remainder of this document will cover the container types
+available in {clcl}, the methods applicable to these
+containers, information about the internal design of {clcl}
+and examples of containers in use. As will become evident,
+{clcl}'s design borrows from the Standard Template Library,
+Smalltalk and existing Lisp idioms wherever possible.
