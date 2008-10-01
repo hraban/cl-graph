@@ -341,11 +341,13 @@ B--D []
   (:export-p t))
 
 
-(defmethod (setf dot-attribute-value) :before (value (attr symbol) (thing dot-attributes-mixin))
+(defmethod (setf dot-attribute-value)
+    :before (value (attr symbol) (thing dot-attributes-mixin))
   (declare (ignore value))
   (ensure-valid-dot-attribute attr thing))
 
-(defmethod (setf dot-attribute-value) (value (attr symbol) (thing dot-attributes-mixin))
+(defmethod (setf dot-attribute-value) 
+    (value (attr symbol) (thing dot-attributes-mixin))
   (setf (getf (dot-attributes thing) attr) value))
 
 (defmethod dot-attribute-value ((attr symbol) (thing dot-attributes-mixin))
@@ -515,10 +517,10 @@ the program in *dot-path*."
     #-(or sbcl lispworks)
     (error "Don't know how to execute a program on this platform")))
 
-;;; ---------------------------------------------------------------------------
-;
+;;;
 ; Test dot external
-;
+
+#+test
 (defun test-dot-external ()
   (let* ((g (make-graph 'dot-graph))
          (v1 (add-vertex g 'a :dot-attributes '(:shape :box

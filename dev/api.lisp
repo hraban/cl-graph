@@ -51,6 +51,9 @@ be called with the previous edge."))
 (defgeneric delete-edge (graph edge)
   (:documentation "Delete the `edge' from the `graph' and returns it."))
 
+(defgeneric delete-all-edges (graph)
+  (:documentation "Delete all edges from `graph'. Returns the graph.."))
+
 
 (defgeneric delete-edge-between-vertexes (graph value-or-vertex-1
                                                 value-or-vertex-2 &rest args)
@@ -103,11 +106,6 @@ the graph."))
 
 (defgeneric iterate-target-edges (vertex fn)
   (:documentation "In a directed graph, calls `fn` on each edge of a vertex that ends at vertex. In an undirected graph, this is equivalent to `iterate-edges`."))
-
-
-(defgeneric iterate-children (vertex fn)
-  (:documentation "Calls fn on every vertex that is either connected to vertex by an undirected edge or is at the target end of a directed edge."))
-
 
 (defgeneric has-children-p (vertex)
   (:documentation "In a directed graph, returns true if vertex has any edges that point from vertex to some other vertex (cf. iterate-target-edges). In an undirected graph, `has-children-p` is testing only whether or not the vertex has any edges."))
@@ -586,9 +584,33 @@ counted as a source. [?? Could be a defun]."))
 (defgeneric complete-links (new-graph old-graph)
   (:documentation "Add edges between vertexes in the new-graph for which the matching  vertexes in the old-graph have edges. The vertex matching is done using `find-vertex`."))
 
-(defgeneric subgraph-containing (graph vertex &key)
-  (:documentation "Returns a new graph that is a subset of `graph` that contains `vertex` and all of the other vertexes that can be reached from vertex by paths of less than or equal of length `depth`. If depth is not specified, then the entire sub-graph reachable from vertex will be returned. [?? Edge weights are always assumed to be one.]"))
+(defgeneric subgraph-containing (graph vertex &key depth new-graph)
+  (:documentation "Returns a new graph that is a subset of `graph` 
+that contains `vertex` and all of the other vertexes that can be 
+reached from vertex by paths of less than or equal of length `depth`. 
+If depth is not specified, then the entire sub-graph reachable 
+from vertex will be returned. [?? Edge weights are always assumed
+to be one.]"))
 
 
 (defgeneric weight (edge)
-  (:documentation "Returns the weight of an edge. This defaults to 1.0 and can only be altered if the edge is a sub-class of `weighted-edge-mixin`."))
+  (:documentation "Returns the weight of an edge. This defaults
+to 1.0 and can only be altered if the edge is a sub-class of 
+`weighted-edge-mixin`."))
+
+(defgeneric (setf dot-attribute-value) (value attribute thing)
+  )
+
+(defgeneric dot-attribute-value (attribute thing)
+  )
+
+(defgeneric graph->dot-external (graph file-name &key type)
+  )
+
+(defgeneric ensure-valid-dot-attribute (key object)
+  )
+
+(defgeneric write-name-for-dot (attribute stream)
+  )
+
+

@@ -84,7 +84,8 @@
 
 (defmethod subgraph-containing ((graph basic-graph) (vertex basic-vertex)
                                 &rest args &key (depth nil) (new-graph nil))
-  (declare (ignore depth new-graph))
+  (declare (ignore depth new-graph)
+	   (dynamic-extent args))
   (apply #'make-filtered-graph
 	 graph
 	 #'(lambda (v)

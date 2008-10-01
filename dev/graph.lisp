@@ -753,11 +753,10 @@ something is putting something on the vertexes plist's
        (setf (tag vertex) nil)
        (traverse-elements-helper vertex style marker fn)))))
 
-
 ;; also in metatilites
 (defun graph-search-for-cl-graph (states goal-p successors combiner
 				  &key (state= #'eql) old-states
-				  (new-state-fn #'new-states))
+				  (new-state-fn (error "argument required")))
   "Find a state that satisfies goal-p.  Start with states,
   and search according to successors and combiner.  
   Don't try the same state twice."

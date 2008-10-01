@@ -146,8 +146,7 @@
        (let ((element (element (parent component))))
          (unless (item-at found-elements element)
            (setf (item-at found-elements element) t)
-           
-           (push (subgraph-containing graph (element component) 
+	   (push (subgraph-containing graph (element component) 
                                       most-positive-fixnum)
                  result)))))
     
