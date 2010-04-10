@@ -35,7 +35,8 @@ instructions."))
 			:depends-on ("graph"))
 		 (:file "graph-algorithms"
 			:depends-on ("graph"))
-                                     
+		 (:file "dynamic-classes"
+			:depends-on ("graph"))
 		 (:static-file "notes.text")
 
 		 (:module "graphviz" :depends-on ("graph")
@@ -51,7 +52,7 @@ instructions."))
 		      (intern (symbol-name '#:run-tests) :lift)
 		      :config :generic))
   :depends-on ((:version :metatilities-base "0.6.0")
-	       (:version :cl-containers "0.11.0")
+	       (:version :cl-containers "0.12.0")
 	       ))
 
 (defmethod operation-done-p 
@@ -100,14 +101,6 @@ instructions."))
 		"dev"
 		:components
 		((:file "subgraph-containing")))))
-
-#+asdf-system-connections
-(asdf:defsystem-connection cl-graph-and-dynamic-classes
-  :requires (cl-graph dynamic-classes)
-  :components ((:module 
-		"dev"
-		:components
-		((:file "dynamic-classes")))))
 
 
 

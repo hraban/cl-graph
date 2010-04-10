@@ -291,7 +291,7 @@ or the URL 'http://arxiv.org/abs/cond-mat/0209450'."))
 The output can be a stream or pathname or one of the values `nil` or
 `t`. If output is `nil`, then graph->dot returns a string containing
 the DOT description. If it is `t`, then the DOT description is written
-to *standard-output*.
+to \\*standard-output\\*.
 
 Here is an example;
 

@@ -354,7 +354,7 @@ B--D []
   (getf (dot-attributes thing) attr))
 
 (defmacro defpixel-inch-accessors (name attr type)
-  (let ((actual-name (form-symbol name "-IN-PIXELS")))
+  (let ((actual-name (form-symbol name (symbol-name '-in-pixels))))
     `(progn
        (eval-always (export ',actual-name))
       (defmethod ,actual-name ((thing ,type))
