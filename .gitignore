@@ -1,0 +1,14 @@
+# really this is private to my build process
+make/
+common-lisp.net
+.vcs
+GNUmakefile
+init-lisp.lisp
+project-init.lisp
+
+log5.tar.gz
+website/output/
+test-results/
+lift-local.config
+*.dribble
+*.fasl

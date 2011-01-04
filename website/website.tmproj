@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>source/user-guide-details/iteration.mmd</string>
+	<string>../../shared/shared-links.md</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -20,7 +20,9 @@
 			<key>filename</key>
 			<string>../../shared/shared-links.md</string>
 			<key>lastUsed</key>
-			<date>2008-10-01T13:35:22Z</date>
+			<date>2011-01-04T02:51:17Z</date>
+			<key>selected</key>
+			<true/>
 		</dict>
 	</array>
 	<key>fileHierarchyDrawerWidth</key>
@@ -32,23 +34,23 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>41</integer>
+				<integer>59</integer>
 				<key>line</key>
-				<integer>23</integer>
+				<integer>70</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>17</integer>
+			<integer>34</integer>
 		</dict>
-		<key>source/index.md</key>
+		<key>source/index.mmd</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>58</integer>
 				<key>line</key>
-				<integer>1</integer>
+				<integer>30</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -130,9 +132,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>32</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>26</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -279,26 +281,24 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>source/user-guide.md</key>
+		<key>source/user-guide.mmd</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>74</integer>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>42</integer>
+			<integer>0</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>source/resources/header.md</string>
-		<string>source/index.md</string>
-		<string>source/user-guide.md</string>
 		<string>source/user-guide.css</string>
 		<string>source/user-guide-details/motivation.mmd</string>
 		<string>source/user-guide-details/miscellaneous.mmd</string>
@@ -311,6 +311,8 @@
 		<string>source/user-guide-details/random-graphs.mmd</string>
 		<string>source/user-guide-details/algorithms.mmd</string>
 		<string>../../shared/shared-links.md</string>
+		<string>source/index.mmd</string>
+		<string>source/user-guide.mmd</string>
 		<string>source/resources/ug-header.md</string>
 		<string>source/resources/shared-header.md</string>
 		<string>source/resources/footer.md</string>
@@ -319,6 +321,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{611, 97}, {578, 778}}</string>
+	<string>{{611, 0}, {578, 778}}</string>
 </dict>
 </plist>

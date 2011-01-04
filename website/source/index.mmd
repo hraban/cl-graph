@@ -9,9 +9,9 @@
 
   * [Mailing Lists][3]
   * [Getting it][4]
-  * [Documentation][5]
+{remark  * [Documentation][5] }
   * [News][6]
-  * [Test results][tr]
+{remark  * [Test results][tr]}
   * [Changelog][7]
 
    [3]: #mailing-lists
@@ -27,10 +27,12 @@
 ### What it is
 
 CL-Graph is a Common Lisp library for manipulating graphs and
-running graph algorithms. [TINAA][8] documentation for
-CL-Graph is [available][9].
+running graph algorithms. {remark [TINAA][] documentation for
+CL-Graph is [available][9].} Check out the [user's guide](user-guide.html)
+for some very old and yet still preliminary documentation. 
 
-   [8]: http://common-lisp.net/project/tinaa/
+The style-sheet is currently completely bogus. Apologies in advance.
+
    [9]: http://common-lisp.net/project/cl-graph/documentation/
 
 {anchor mailing-lists}
@@ -44,14 +46,23 @@ CL-Graph is [available][9].
 
 ### Where is it
 
-A [darcs][] repository is available (note that you'll also
-need to get several other bits and pieces to get CL-Graph to
-work). The commands are listed below:
+metabang.com is switching from [darcs][] to [git][]
+for source control; the current cl-graph repository is on
+[github][github-cl-graph] and you can clone it using:
 
-    darcs get http://common-lisp.net/project/cl-graph/
-    darcs get http://common-lisp.net/project/metabang-bind/
-    darcs get http://common-lisp.net/project/metatilities-base/
-    darcs get http://common-lisp.net/project/moptilities/
+    git clone git://github.com/gwkkwg/cl-graph
+
+(note that you'll also
+need to get several other bits and pieces to get CL-Graph to
+work. The commands are listed below:
+
+    git clone git://github.com/gwkkwg/metabang-bind
+    git clone git://github.com/gwkkwg/metatilities-base
+    git clone git://github.com/gwkkwg/moptilities
+
+You might also want [dynamic-classes][]:
+
+    git clone git://github.com/gwkkwg/dynamic-classes
 
 CL-Graph (and friends) should also be [ASDF
 installable][asdf-install]. Its CLiki home is right
@@ -60,6 +71,9 @@ installable][asdf-install]. Its CLiki home is right
 There's also a handy [gzipped tar file][tarball].
 
 ### What is happening
+
+8 January 2011
+Moved to github; minor cleanup.
 
 2 Feb 2006
 Lots of new [CL-Graph][16] documentation.

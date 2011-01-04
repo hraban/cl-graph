@@ -10,7 +10,7 @@ DISCUSSION
 (in-package #:common-lisp-user)
 
 (defpackage #:cl-graph
-  (:use #:common-lisp #:metatilities #:cl-containers)
+  (:use #:common-lisp #:metatilities #:cl-containers #:metabang-bind)
   (:nicknames #:metabang.graph)
   (:documentation "CL-Graph is a Common Lisp library for manipulating graphs and running graph algorithms.")
   

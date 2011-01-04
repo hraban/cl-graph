@@ -4,12 +4,14 @@
 (defpackage #:cl-graph-system (:use #:cl #:asdf))
 (in-package #:cl-graph-system)
 
-(unless (find-system 'asdf-system-connections nil)
+(unless (or (member :asdf-system-connections *features*)
+	    (find-system 'asdf-system-connections nil))
   (warn "The CL-Graph system would enjoy having asdf-system-connections 
 around. See 
 http://www.cliki.net/asdf-system-connections for details and download
 instructions."))
-(when (find-system 'asdf-system-connections nil)
+(when (and (not (member :asdf-system-connections *features*))
+	   (find-system 'asdf-system-connections nil))
   (operate 'load-op 'asdf-system-connections))
 
 (defsystem cl-graph
@@ -35,6 +37,7 @@ instructions."))
 			:depends-on ("graph"))
 		 (:file "graph-algorithms"
 			:depends-on ("graph"))
+		 #+(or)
 		 (:file "dynamic-classes"
 			:depends-on ("graph"))
 		 (:static-file "notes.text")
@@ -53,6 +56,7 @@ instructions."))
 		      :config :generic))
   :depends-on ((:version :metatilities-base "0.6.0")
 	       (:version :cl-containers "0.12.0")
+	       :metabang-bind
 	       ))
 
 (defmethod operation-done-p 
@@ -68,6 +72,14 @@ instructions."))
 		((:file "graph-and-variates")
 		 (:file "graph-generation"
 			:depends-on ("graph-and-variates"))))))
+
+#+asdf-system-connections
+(asdf:defsystem-connection cl-graph-and-dynamic-classes
+  :requires (cl-graph dynamic-classes)
+  :components ((:module 
+		"dev"
+		:components
+		((:file "dynamic-classes")))))
 
 #+asdf-system-connections
 (asdf:defsystem-connection cl-graph-and-cl-graphviz
