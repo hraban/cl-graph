@@ -130,7 +130,8 @@ something is putting something on the vertexes plist's
 
 
 (defmethod weight ((edge basic-edge)) (values 1.0))
-
+(defmethod weight ((edge weighted-edge-mixin)) 
+  (slot-value edge 'weight))
 
 (defclass* basic-graph ()
   ((graph-vertexes :unbound ir)
