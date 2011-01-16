@@ -644,7 +644,7 @@ something is putting something on the vertexes plist's
 
 (defmethod rootp ((vertex basic-vertex))
   ;;?? this is inefficient in the same way that (zerop (length <list>)) is...
-  (zerop (source-edge-count vertex)))
+  (zerop (target-edge-count vertex)))
 
 
 (defmethod find-vertex-if ((graph basic-graph) fn &key key)
