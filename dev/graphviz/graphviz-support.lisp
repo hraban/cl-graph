@@ -496,11 +496,11 @@ B--D []
 #+(or linux unix)
 (defvar *dot-path* "/usr/bin/dot" "Path to `dot`")
 
-(defmethod graph->dot-external ((g basic-graph) file-name &key (type :ps))
+(defmethod graph->dot-external ((g basic-graph) file-name &rest args &key (type :ps) &allow-other-keys)
   "Generate an external represenation of a graph to a file, by running
 the program in *dot-path*."
   (declare (ignorable file-name))
-  (let ((dot-string (graph->dot g nil))
+  (let ((dot-string (apply #'graph->dot g nil args))
         (dot-type (concatenate 'string "-T" (string-downcase (symbol-name type)))))
     (declare (ignorable dot-string dot-type))
     #+lispworks (with-open-stream
