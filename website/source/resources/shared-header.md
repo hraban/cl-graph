@@ -1,6 +1,5 @@
 {include shared-links.md}
 {set-property html yes}
-{set-property style-sheets "http://common-lisp.net/project/cl-containers/shared/style-200.css" "user-guide.css"}
 {set-property author "Gary Warren King"}
 
 <div id="header">
