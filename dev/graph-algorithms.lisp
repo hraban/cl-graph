@@ -10,11 +10,11 @@
 
 (defmethod initialize-vertex-data ((graph basic-graph))
   (let ((vertex-data (make-container 'simple-associative-container)))
-    (iterate-vertexes graph (lambda (v) 
-                              (setf (item-at vertex-data v) 
+    (iterate-vertexes graph (lambda (v)
+                              (setf (item-at vertex-data v)
                                     (make-vertex-datum :color :white))))
     (values vertex-data)))
-  
+
 ;;; breadth-first-search by GWK
 
 (defmethod breadth-first-visitor ((graph basic-graph) (source t) fn)
@@ -25,12 +25,12 @@
   ;; initialize
   (let ((vertex-data (initialize-vertex-data graph))
         (queue (make-container 'basic-queue)))
-    
+
     (let ((source-datum (item-at vertex-data source)))
       (setf (node-color source-datum) :grey
             (node-depth source-datum) 0)
       (enqueue queue source)
-      
+
       (loop until (empty-p queue) do
             (let* ((current-vertex (first-item queue))
                    (current (item-at vertex-data current-vertex)))
@@ -44,11 +44,11 @@
                                             (node-depth child) (1+ (node-depth current))
                                             (node-parent child) current-vertex)
                                       (enqueue queue child-vertex)))))
-              
+
               (dequeue queue)
               (setf (node-color current) :black)
               (funcall fn current-vertex)))
-      
+
       vertex-data)))
 
 
@@ -60,12 +60,12 @@
   ;; initialize
   (let ((vertex-data (initialize-vertex-data graph))
         (queue (make-container 'basic-queue)))
-    
+
     (let ((source-datum (item-at vertex-data source)))
       (setf (node-color source-datum) :grey
             (node-depth source-datum) 0)
       (enqueue queue source)
-      
+
       (loop until (empty-p queue) do
             (let* ((current-vertex (first-item queue))
                    (current (item-at vertex-data current-vertex)))
@@ -79,12 +79,12 @@
                                             (node-depth child) (1+ (node-depth current))
                                             (node-parent child) current-vertex)
                                       (enqueue queue child-vertex)))))
-              
+
               (dequeue queue)
               (setf (node-color current) :black)))
-      
+
       vertex-data)))
-    
+
 ;;; single-source-shortest-paths - gwk
 
 #+NotYet
@@ -102,9 +102,9 @@
     (iterate-vertexes
      graph
      (lambda (v) (insert-item union v)))
-    (iterate-edges 
-     graph 
-     (lambda (e) 
+    (iterate-edges
+     graph
+     (lambda (e)
        (let ((node-1 (representative-node union (vertex-1 e)))
              (node-2 (representative-node union (vertex-2 e))))
          (unless (eq (find-set node-1) (find-set node-2))
@@ -115,25 +115,25 @@
 
 (defmethod connected-component-count ((graph basic-graph))
   ;;?? Gary King 2005-11-28: Super ugh
-  (size 
+  (size
    (remove-duplicates
-    (collect-elements 
+    (collect-elements
      (connected-components graph)
      :transform #'parent)))
-  
+
   #+Fails
   ;;?? Gary King 2005-11-28: fails on big graphs? iterator design
   ;;?? Gary King 2005-11-28: ideally we don't want to cons up the list at all
-  (size 
+  (size
    (collect-elements
     (make-iterator (connected-components graph) :unique t :transform #'parent))))
 
 (defmethod find-connected-components ((graph basic-graph))
   (collect-elements
    (make-iterator (connected-components graph) :unique t :transform #'parent)
-   :transform 
+   :transform
    (lambda (component)
-     (subgraph-containing graph (element component) 
+     (subgraph-containing graph (element component)
                           :depth most-positive-fixnum))))
 
 #+Alternate
@@ -146,14 +146,14 @@
        (let ((element (element (parent component))))
          (unless (item-at found-elements element)
            (setf (item-at found-elements element) t)
-	   (push (subgraph-containing graph (element component) 
+           (push (subgraph-containing graph (element component)
                                       most-positive-fixnum)
                  result)))))
-    
+
     result))
 
 
-         
+
 ;;; minimum-spanning-tree based on kruskal's algorithm detailed in clrs2 -jjm
 
 (defmethod mst-find-set ((vertex basic-vertex))
@@ -185,13 +185,13 @@
 ;;; todo - figure out some what to add and edge we create to a graph rather
 ;;; than always using add-edge-between-vertexes interface
 
-(defmethod add-edges-to-graph ((graph basic-graph) (edges list) 
+(defmethod add-edges-to-graph ((graph basic-graph) (edges list)
                                &key (if-duplicate-do :ignore))
   (iterate-elements
    edges
    (lambda (edge)
      (let ((v1 (element (source-vertex edge)))
-	   (v2 (element (target-vertex edge))))
+           (v2 (element (target-vertex edge))))
        (add-edge-between-vertexes
         graph v1 v2 :edge-class (type-of edge)
         :edge-type (if (directed-edge-p edge)
@@ -213,19 +213,19 @@
 ;;; minumum spanning tree
 
 
-(defmethod minimum-spanning-tree ((graph basic-graph) 
+(defmethod minimum-spanning-tree ((graph basic-graph)
                                   &key
                                   (edge-sorter #'edge-lessp-by-weight))
   (let ((result nil))
-    (iterate-vertexes 
+    (iterate-vertexes
      graph
      (lambda (v)
        (mst-make-set v)))
-    
+
     (loop for edge in (sort (edges graph) edge-sorter) do
           (let ((v1 (source-vertex edge))
                  (v2 (target-vertex edge)))
-            
+
             (unless (eq (mst-find-set v1)
                         (mst-find-set v2))
               (push edge result)
@@ -238,29 +238,29 @@
 
 
 #+ignore ;;; shoot
-(defmethod minimum-spanning-tree ((vertex-list list) 
+(defmethod minimum-spanning-tree ((vertex-list list)
                                   &key
                                   (edge-sorter #'edge-lessp-by-weight))
   (let ((result nil)
-         (v-edges (remove-duplicates 
+         (v-edges (remove-duplicates
                    (flatten (mapcar #'edges vertex-list)) :test #'eq)))
-    
+
     (iterate-container
      vertex-list
      (lambda (v)
-       (mst-make-set v)))    
-    
+       (mst-make-set v)))
+
     (loop for edge in (sort v-edges edge-sorter) do
           (let ((v1 (source-vertex edge))
-		(v2 (target-vertex edge))
-		(v1-set (mst-find-set v1))
-		(v2-set (mst-find-set v2)))
+                (v2 (target-vertex edge))
+                (v1-set (mst-find-set v1))
+                (v2-set (mst-find-set v2)))
 
             (when (or (not v1-set)
                            (not v2-set))
               (return-from minimum-spanning-tree nil))
-            
-            
+
+
             (unless (eq (mst-find-set v1)
                         (mst-find-set v2))
               (push edge result)
@@ -273,11 +273,11 @@
 
 ;;; uses mst to determine if the graph is connected
 
-(defmethod connected-graph-p ((graph basic-graph) &key 
+(defmethod connected-graph-p ((graph basic-graph) &key
                               (edge-sorter 'edge-lessp-by-weight))
   (minimum-spanning-tree graph :edge-sorter edge-sorter))
 
-  
+
 
 #+test
 (let ((g (make-container 'graph-container)))
@@ -292,7 +292,7 @@
                              :if-duplicate-do :force)
   (minimum-spanning-tree g))
 
-;;; GWK's implementation of kruskal's - slightly faster, but it doesn't return 
+;;; GWK's implementation of kruskal's - slightly faster, but it doesn't return
 ;;; a tree (still faster even if it does).  Will decide later if which to use
 ;;; ignoring for now -jjm
 
@@ -301,7 +301,7 @@
   (let ((a nil)
         (union (make-container 'union-find-container))
         (edges (sort (edges graph) #'< :key weight)))
-    (iterate-vertexes 
+    (iterate-vertexes
      graph (lambda (v) (insert-item union v)))
     (dolist (edge edges)
       (let ((node-1 (representative-node union (vertex-1 edge)))
@@ -309,7 +309,7 @@
         (unless (eq (find-set node-1) (find-set node-2))
           (graft-nodes node-1 node-2)
           (push edge a))))
-    
+
     (values a)))
 
 
@@ -317,11 +317,11 @@
 (loop for f in '(mst-kruskal minimum-spanning-tree-kruskal) do
       (fluid-bind (((random-seed *random-generator*) 1))
         (bind ((g (generate-undirected-graph-via-vertex-probabilities
-                   *random-generator* (make-instance 'graph-container :default-edge-type :directed) 
+                   *random-generator* (make-instance 'graph-container :default-edge-type :directed)
                    100
-                   #(0.8 0.2) 
+                   #(0.8 0.2)
                    #2A((0.2 0.1) (nil 0.2))
-                   (lambda (kind count) 
+                   (lambda (kind count)
                      (form-keyword "H" (format nil "~2,'0D~4,'0D" kind count))))
                   ))
           (timeit (:report :values)
@@ -332,7 +332,7 @@
 
 ;;; end minimum spanning tree
 
-    
+
 ;;; depth-first-search - clrs2
 ;;; todo - figure out how to name this depth-first-search, which is already
 ;;; defined in search.lisp
@@ -367,8 +367,8 @@
         (t nil)))
 
 ;;; depth-first-search
-                                                  
-(defmethod dfs ((graph basic-graph) (root t) fn &key 
+
+(defmethod dfs ((graph basic-graph) (root t) fn &key
                 (out-edge-sorter #'edge-lessp-by-direction))
   (dfs graph (find-vertex graph root) fn :out-edge-sorter out-edge-sorter))
 
@@ -376,55 +376,88 @@
 (defmethod dfs ((graph basic-graph) (root basic-vertex) fn &key
                 (out-edge-sorter #'edge-lessp-by-direction))
   (setf *depth-first-search-timer* -1)
-  
-  (iterate-vertexes 
+
+  (iterate-vertexes
    graph
    (lambda (v)
      (setf (color v) :white
            (previous-node v) nil
            (discovery-time v) -1
            (finish-time v) -1)))
-  
+
   (iterate-edges
    graph
    (lambda (e)
      (setf (color e) nil)))
-  
-  (loop with vl = (remove root (vertexes graph) :test #'eql)
-        for v in (push root vl) do
-        (when (eql (color v) :white)
-          (dfs-visit graph v fn out-edge-sorter)))
-  
+
+  (loop for v in (cons root (remove root (vertexes graph) :test #'eql))
+        when (eql (color v) :white)
+          do (dfs-visit graph v fn out-edge-sorter))
+
   (values
    (sort (copy-list (vertexes graph)) #'< :key #'finish-time)
    graph))
 
+(defgeneric rooted-dfs (graph root fn &key out-edge-sorter)
+  (:documentation "A variant of DFS that does not visit nodes that are
+unreachable from the ROOT.")
+  (:method ((graph basic-graph) (root t) fn &key
+            (out-edge-sorter #'edge-lessp-by-direction))
+     (rooted-dfs graph (find-vertex graph root) fn :out-edge-sorter out-edge-sorter))
+  (:method ((graph basic-graph) (root basic-vertex) fn &key
+                (out-edge-sorter #'edge-lessp-by-direction))
+       (setf *depth-first-search-timer* -1)
+
+  (iterate-vertexes
+   graph
+   (lambda (v)
+     (setf (color v) :white
+           (previous-node v) nil
+           (discovery-time v) -1
+           (finish-time v) -1)))
+
+  (iterate-edges
+   graph
+   (lambda (e)
+     (setf (color e) nil)))
+
+  (dfs-visit graph root fn out-edge-sorter)
+
+  (values
+   (sort (remove-if #'(lambda (v) (eq (color v) :white))
+                    (vertexes graph))
+         #'< :key #'finish-time)
+   graph)))
+
 
 (defmethod dfs-visit ((graph graph-container) (u basic-vertex)
                                      fn sorter)
-  
-  
+
+
   (incf *depth-first-search-timer*)
+  ;; the following should be removed later for efficiency [2011/03/10:rpg]
+  (unless (eq (color u) :white)
+    (error "precondition for DFS-VISIT violated."))
   (setf (color u) :gray
         (discovery-time u) *depth-first-search-timer*)
-  
-  
+  ;; moved the funcall up here, fixing a boundary condition where the
+  ;; function was never called on root nodes. [2011/03/10:rpg]
+  (funcall fn u)
+
   (loop for edge in (sort (collect-elements
                            (edges u)
                            :filter (lambda (e)
-                                     (out-edge-for-vertex-p e u))) sorter) do
-        (let ((v (other-vertex edge u)))
-          
-          (unless (color edge)
-            (setf (color edge) (color v)))
-          
-          (when (eql (color v) :white)
+                                     (out-edge-for-vertex-p e u))) sorter)
+        as v = (other-vertex edge u)
+        unless (color edge)
+          do (setf (color edge) (color v))
+        when (eql (color v) :white)
+          do
               (setf (previous-node v) u)
-              (funcall fn v)
-              (dfs-visit graph v fn sorter))))
-  
+              (dfs-visit graph v fn sorter))
+
   (incf *depth-first-search-timer*)
-  
+
   (setf (color u) :black
         (finish-time u) *depth-first-search-timer*))
 
@@ -441,8 +474,7 @@
   (add-edge-between-vertexes g :w :z :edge-type :directed)
   (add-edge-between-vertexes g :z :z :edge-type :directed
                              :if-duplicate-do :force)
-  (print (mapcar #'element (dfs g :u #'identity)))
-  (assert (equal '(:x :y :v :u :z :w)
+  (assert (equal '(:X :Y :V :U :Z :W)
                  (mapcar #'element (dfs g :u #'identity)))))
 
 
@@ -492,8 +524,8 @@
 (defmethod map-over-all-combinations-of-k-vertexes ((graph basic-graph) k fn)
   (let* ((vertex-count (size graph))
          (symbols (make-list k :initial-element vertex-count))
-         (vertexes (vertexes graph))) 
-    (iterate-over-indexes 
+         (vertexes (vertexes graph)))
+    (iterate-over-indexes
      symbols
      (lambda (vertex-indexes)
        (when (apply #'< vertex-indexes)
@@ -512,8 +544,8 @@
   (add-edge-between-vertexes g :y :x :edge-type :directed)
   (add-edge-between-vertexes g :w :y :edge-type :directed)
   (add-edge-between-vertexes g :w :z :edge-type :directed)
-  
-  (map-over-all-combinations-of-k-vertexes  
+
+  (map-over-all-combinations-of-k-vertexes
    g
    4
    (lambda (vertex-list)
@@ -522,15 +554,15 @@
          (push graph-from-vertexes result)))))
   result)
 
-;;; over edges 
+;;; over edges
 ;;; todo: merge these two defs
 
 (defmethod map-over-all-combinations-of-k-edges ((graph basic-graph) k fn)
   (let* ((edge-count (edge-count graph))
          (symbols (make-list k :initial-element edge-count))
-         (edges (edges graph))) 
+         (edges (edges graph)))
     (print symbols)
-    (iterate-over-indexes 
+    (iterate-over-indexes
      symbols
      (lambda (edge-indexes)
        (when (apply #'< edge-indexes)
@@ -541,10 +573,10 @@
 
 (defmethod map-over-all-combinations-of-k-edges ((vertex basic-vertex) k fn)
   (let* ((edge-count (edge-count vertex))
-	 (symbols (make-list k :initial-element edge-count))
-	 (edges (edges vertex))) 
+         (symbols (make-list k :initial-element edge-count))
+         (edges (edges vertex)))
     ;(print symbols)
-    (iterate-over-indexes 
+    (iterate-over-indexes
      symbols
      (lambda (edge-indexes)
        (when (apply #'< edge-indexes)
@@ -553,15 +585,15 @@
                              edge-indexes)))))))
 
 #+test
-(map-over-all-combinations-of-k-edges 
+(map-over-all-combinations-of-k-edges
  (generate-undirected-graph-via-verex-probabilities
-  *random-generator* 'graph-container 
+  *random-generator* 'graph-container
   10
-  #(0.8 0.2) 
+  #(0.8 0.2)
   #2A((0.2 0.1) (nil 0.2))
-  (lambda (kind count) 
+  (lambda (kind count)
     (form-keyword "H" (format nil "~2,'0D~4,'0D" kind count))))
- 2 
+ 2
  (lambda (es)
    (format t "~%")
    (mapc (lambda (e)

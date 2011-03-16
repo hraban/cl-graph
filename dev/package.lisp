@@ -146,7 +146,8 @@ DISCUSSION
    #:edge-lessp-by-direction
    #:out-edge-for-vertex-p
    #:dfs
-   
+   #:rooted-dfs
+
    ;;; minimum-spanning-tree
    #+Ignore #:add-edges-to-graph
    

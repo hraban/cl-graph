@@ -622,10 +622,11 @@ as a source. [?? Could be a defun]."))
 
 (defgeneric find-edge-between-vertexes-if
   (graph value-or-vertex-1 value-or-vertex-2 fn &key error-if-not-found?)
-  (:documentation "Finds and returns an edge between value-or-vertex-1
-  and value-or-vertex-2 if one exists. Unless error-if-not-found? is
-  nil, then a error will be signaled. [?? Error not signal, need
-  test.]"))
+  (:documentation 
+   "Finds and returns an edge between value-or-vertex-1
+and value-or-vertex-2 which returns true (as a generalized boolean) when
+evaluated by `fn`. Unless error-if-not-found? is nil, then a error will 
+be signaled. [?? IS error really signaled? need a test.]"))
 
 (defgeneric vertices-share-edge-p (vertex-1 vertex-2)
   (:documentation "Return true if vertex-1 and vertex-2 are connected
