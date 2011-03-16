@@ -441,7 +441,8 @@
   (add-edge-between-vertexes g :w :z :edge-type :directed)
   (add-edge-between-vertexes g :z :z :edge-type :directed
                              :if-duplicate-do :force)
-  (assert (equal '(:X :Y :V :U :Z :W)
+  (print (mapcar #'element (dfs g :u #'identity)))
+  (assert (equal '(:x :y :v :u :z :w)
                  (mapcar #'element (dfs g :u #'identity)))))
 
 

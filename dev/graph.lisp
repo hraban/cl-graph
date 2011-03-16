@@ -53,14 +53,14 @@ something is putting something on the vertexes plist's
   ((vertex-1 nil ir "One of the vertexes for which no connecting edge could be found.")
    (vertex-2 nil ir "One of the vertexes for which no connecting edge could be found."))
   (:report (lambda (c s)
-             (format s "Edge between ~S and ~S not found in ~A" 
+             (format s "Edge between ~S and ~S not found in ~A"
                      (vertex-1 c) (vertex-2 c) (graph c))))
   (:export-p t)
   (:export-slots-p t)
   (:documentation "This condition is signaled when an edge cannot be found in a graph."))
 
 
-(defclass* basic-vertex (container-node-mixin) 
+(defclass* basic-vertex (container-node-mixin)
   ((depth-level 0 ia :type number "`Depth-level` is used by some algorithms for bookkeeping.  [?? Should be in a mixin]")
    (vertex-id 0 ir "`Vertex-id` is used internally to keep track of vertexes.")
    (element :unbound ia :accessor value "The `element` is the value that this vertex represents.")
@@ -83,16 +83,16 @@ something is putting something on the vertexes plist's
   (when (and graph (not vertex-id))
     (setf (slot-value object 'vertex-id)
           (largest-vertex-id graph))
-    (incf (slot-value graph 'largest-vertex-id)))) 
+    (incf (slot-value graph 'largest-vertex-id))))
 
 
 (defmethod print-object ((vertex basic-vertex) stream)
   (print-unreadable-object (vertex stream :identity nil)
-    (format stream "~A" 
+    (format stream "~A"
             (if (and (slot-exists-p vertex 'element) (slot-boundp vertex 'element))
               (element vertex) "#unbound#"))))
 
-  
+
 (defclass* basic-edge ()
   ((edge-id 0 ia "The `edge-id` is used internally by CL-Graph for bookkeeping.")
    (element nil ia :accessor value :initarg :value)
@@ -113,7 +113,7 @@ something is putting something on the vertexes plist's
 
 
 (defmethod print-object ((object basic-edge) stream)
-  (print-unreadable-object (object stream :type t) 
+  (print-unreadable-object (object stream :type t)
     (format stream "<~A ~A>" (vertex-1 object) (vertex-2 object))))
 
 
@@ -143,7 +143,7 @@ something is putting something on the vertexes plist's
                         "The class used to create directed edges in the graph. This must extend the base-class for edges of the graph type and directed-edge-mixin. E.g., the directed-edge-class of a graph-container must extend graph-container-edge and directed-edge-mixin.")
    (undirected-edge-class 'basic-edge ir
                           "The class used to create undirected edges in the graph. This must extend the base-class for edges of the graph type. E.g., all edges of a graph-container must extend graph-container-edge")
-   (contains-directed-edge-p nil ar 
+   (contains-directed-edge-p nil ar
                              "Returns true if graph contains at least one directed edge. [?? Not sure if this is really keep up-to-date.]")
    (contains-undirected-edge-p nil ar
                                "Returns true if graph contains at least one undirected edge. [?? Not sure if this is really keep up-to-date.]")
@@ -165,9 +165,9 @@ something is putting something on the vertexes plist's
 
 (defmethod initialize-instance :after ((object basic-graph) &key initial-size
                                        &allow-other-keys)
-  (setf (slot-value object 'graph-vertexes) 
+  (setf (slot-value object 'graph-vertexes)
         (make-vertex-container object initial-size))
-  (setf (slot-value object 'graph-edges) 
+  (setf (slot-value object 'graph-edges)
         (make-edge-container object initial-size)))
 
 
@@ -176,7 +176,7 @@ something is putting something on the vertexes plist's
     (format stream "[~A,~A]" (size graph) (edge-count graph))))
 
 
-;;; internals 
+;;; internals
 
 (defmethod add-vertex
     ((graph basic-graph) (value basic-vertex) &key if-duplicate-do)
@@ -184,8 +184,8 @@ something is putting something on the vertexes plist's
   (values value))
 
 
-(defmethod make-vertex-for-graph ((graph basic-graph) &rest args &key 
-                                  (vertex-class (vertex-class graph)) 
+(defmethod make-vertex-for-graph ((graph basic-graph) &rest args &key
+                                  (vertex-class (vertex-class graph))
                                   &allow-other-keys)
   (remf args :vertex-class)
   (assert (subtypep vertex-class (vertex-class graph)) nil
@@ -193,7 +193,7 @@ something is putting something on the vertexes plist's
   (apply #'make-instance vertex-class :graph graph args))
 
 
-(defmethod make-edge-for-graph ((graph basic-graph) 
+(defmethod make-edge-for-graph ((graph basic-graph)
                                 (vertex-1 basic-vertex) (vertex-2 basic-vertex)
                                 &rest args &key
                                 (edge-type (default-edge-type graph))
@@ -205,14 +205,14 @@ something is putting something on the vertexes plist's
               (eq edge-type :directed)
               (eq edge-type :undirected)) nil
           "Edge-type must be nil, :directed or :undirected.")
-  
+
   (assert (or (null edge-class)
               (subtypep edge-class (directed-edge-class graph))
               (subtypep edge-class (undirected-edge-class graph))) nil
           "Edge-class must be nil or a subtype of ~A or ~A"
           (undirected-edge-class graph)
           (directed-edge-class graph))
-  
+
   (apply #'make-instance
          (or edge-class
              (ecase edge-type
@@ -227,7 +227,7 @@ something is putting something on the vertexes plist's
 (defmethod make-graph ((graph-type symbol) &rest args &key &allow-other-keys)
   (apply #'make-instance graph-type args))
 
-;;; generic implementation 
+;;; generic implementation
 
 (defmethod undirected-edge-p ((edge basic-edge))
   (not (directed-edge-p edge)))
@@ -295,7 +295,7 @@ something is putting something on the vertexes plist's
 
 ;; :ignore, :force, :replace, <function>
 
-(defmethod add-vertex ((graph basic-graph) (value t) &rest args &key 
+(defmethod add-vertex ((graph basic-graph) (value t) &rest args &key
                        (if-duplicate-do :ignore) &allow-other-keys)
   (remf args :if-duplicate-do)
   (let ((existing-vertex (find-vertex graph value nil)))
@@ -306,21 +306,24 @@ something is putting something on the vertexes plist's
       (if existing-vertex
         (cond ((eq if-duplicate-do :ignore)
                (values existing-vertex :ignore))
-              
+
               ((eq if-duplicate-do :force)
                (add-it :force))
-              
+
               ((eq if-duplicate-do :replace)
                (replace-vertex graph existing-vertex (make-it)))
-              
+
               ((eq if-duplicate-do :replace-value)
                (setf (element existing-vertex) value)
                (values existing-vertex :replace-value))
-              
+
+              ((eq if-duplicate-do :error)
+               (error "Attempting to insert a duplicate node in graph ~a" graph))
+
               (t
                (values (funcall if-duplicate-do existing-vertex)
                        :duplicate)))
-        
+
         ;; not found, add
         (add-it :new)))))
 
@@ -329,18 +332,18 @@ something is putting something on the vertexes plist's
   ;; we need the graph and the new vertex to reference each other
   ;; we need every edge of the old vertex to use the new-vertex
   ;; we need to remove the old vertex
-  ;; 
+  ;;
   ;; since I'm tired today, let's ignore trying to make this elegant
-  
+
   ;; first, we connect the edges to the new vertex so that they don't get deleted
   ;; when we delete the old vertex
-  (iterate-edges 
+  (iterate-edges
    old
    (lambda (e)
-     (if (eq (vertex-1 e) old) 
+     (if (eq (vertex-1 e) old)
        (setf (slot-value e 'vertex-1) new) (setf (slot-value e 'vertex-2) new))
      (add-edge-to-vertex e new)))
-  
+
   (delete-vertex graph old)
   (add-vertex graph new))
 
@@ -359,47 +362,47 @@ something is putting something on the vertexes plist's
 ;;; to-do - add-edge-between-vertexes needs to be able to grab the weight and
 ;;; color from edges that inherit from weight and color mixins
 
-(defmethod add-edge-between-vertexes ((graph basic-graph) 
+(defmethod add-edge-between-vertexes ((graph basic-graph)
                                       (v-1 basic-vertex) (v-2 basic-vertex)
-                                      &rest args &key 
+                                      &rest args &key
                                       (value nil) (if-duplicate-do :ignore)
                                       &allow-other-keys)
   (declare (dynamic-extent args))
   (remf args :if-duplicate-do)
-  
+
   (let ((edge (find-edge-between-vertexes graph v-1 v-2 :error-if-not-found? nil)))
     (flet ((add-it (why)
-             (values (add-edge 
-                      graph 
+             (values (add-edge
+                      graph
                       (apply #'make-edge-for-graph graph v-1 v-2 args))
                      why)))
       (if edge
-        (cond 
+        (cond
          ((eq if-duplicate-do :ignore)
           (values edge :ignore))
-         
+
          ((eq if-duplicate-do :force)
           (add-it :force))
-         
+
          ((eq if-duplicate-do :force-if-different-value)
           (if (equal (value edge) value)
             (values :ignore)
             (add-it :force)))
-         
-         
+
+
          ((eq if-duplicate-do :replace)
           (warn "replace edges isn't really implemented, maybe you can use :replace-value")
           (delete-edge graph edge)
           (add-it :replace))
-         
+
          ((eq if-duplicate-do :replace-value)
           (setf (element edge) value)
           (values edge :replace-value))
-         
+
          (t
           (setf edge (funcall if-duplicate-do edge))
           (values edge :duplicate)))
-        
+
         ;; not found, add
         (add-it :new)))))
 
@@ -447,17 +450,17 @@ something is putting something on the vertexes plist's
   (unless (eq graph (graph vertex))
     (error 'graph-vertex-not-found-error
            :graph graph :vertex vertex))
-  
-  (iterate-edges 
+
+  (iterate-edges
    vertex
    (lambda (edge)
      (delete-edge graph edge)))
-       
+
   (empty! (vertex-edges vertex))
   (values vertex graph))
 
 
-(defmethod delete-vertex :after ((graph basic-graph) 
+(defmethod delete-vertex :after ((graph basic-graph)
                                  (vertex basic-vertex))
   (setf (slot-value vertex 'graph) nil)
   (delete-item-at (graph-vertexes graph)
@@ -493,7 +496,7 @@ something is putting something on the vertexes plist's
 
 
 (defmethod adjacentp ((graph basic-graph) (vertex-1 basic-vertex) (vertex-2 basic-vertex))
-  (iterate-neighbors 
+  (iterate-neighbors
    vertex-1
    (lambda (vertex)
      (when (eq vertex vertex-2)
@@ -530,11 +533,11 @@ something is putting something on the vertexes plist's
     (collect-elements (graph-vertexes graph))))
 
 
-(defmethod add-vertex :before ((graph basic-graph) (vertex basic-vertex) 
+(defmethod add-vertex :before ((graph basic-graph) (vertex basic-vertex)
                                &key &allow-other-keys)
-  
+
   (assert (typep vertex (vertex-class graph)))
-  (setf (item-at (graph-vertexes graph) 
+  (setf (item-at (graph-vertexes graph)
                  (funcall (vertex-key graph) (element vertex))) vertex
         (slot-value vertex 'graph) graph))
 
@@ -568,7 +571,7 @@ something is putting something on the vertexes plist's
   (iterate-vertexes
    edge
    (lambda (vertex)
-     (when (funcall (vertex-test (graph edge)) 
+     (when (funcall (vertex-test (graph edge))
                     (funcall (vertex-key (graph edge)) (element vertex)) value)
        (return-from find-vertex vertex))))
   (when error-if-not-found?
@@ -590,7 +593,7 @@ something is putting something on the vertexes plist's
 	(error "~A not found in ~A" vertex graph))))
 
 (defmethod iterate-elements ((graph basic-graph) fn)
-   (iterate-elements (graph-vertexes graph) 
+   (iterate-elements (graph-vertexes graph)
                      (lambda (vertex) (funcall fn (element vertex)))))
 
 
@@ -647,9 +650,9 @@ something is putting something on the vertexes plist's
 
 
 (defmethod find-vertex-if ((graph basic-graph) fn &key key)
-  (iterate-vertexes graph 
+  (iterate-vertexes graph
                     (lambda (v)
-                      (when (funcall fn (if key (funcall key v) v)) 
+                      (when (funcall fn (if key (funcall key v) v))
                         (return-from find-vertex-if v))))
   (values nil))
 
@@ -692,17 +695,17 @@ something is putting something on the vertexes plist's
    root
    (lambda (c)
      (when (not (member c visited-list))
-       (add-edge-between-vertexes 
+       (add-edge-between-vertexes
         new-graph (value root) (value c) :edge-type :directed)
        (neighbors-to-children new-graph c visited-list)))))
 
-                                
+
 (defmethod generate-directed-free-tree ((graph basic-graph) root)
   (generate-directed-free-tree graph (find-vertex graph root)))
 
 
 (defmethod force-undirected ((graph basic-graph))
-  (iterate-edges 
+  (iterate-edges
    graph
    (lambda (edge)
      (change-class edge (undirected-edge-class graph)))))
@@ -717,7 +720,7 @@ something is putting something on the vertexes plist's
      thing
      (lambda (vertex)
        (setf (tag vertex) marker)))
-    
+
     (iterate-elements
      (graph-roots thing)
      (lambda (vertex)
@@ -731,7 +734,7 @@ something is putting something on the vertexes plist's
      thing
      (lambda (vertex)
        (traverse-elements-helper vertex style marker fn)))
-    
+
     (funcall fn thing)))
 
 
@@ -739,13 +742,13 @@ something is putting something on the vertexes plist's
   (when (eq (tag thing) marker)
     (setf (tag thing) nil)
     (funcall fn thing))
-  
+
   (iterate-neighbors
    thing
    (lambda (vertex)
      (when (eq (tag vertex) marker)
        (funcall fn vertex))))
-  
+
   (iterate-neighbors
    thing
    (lambda (vertex)
@@ -758,7 +761,7 @@ something is putting something on the vertexes plist's
 				  &key (state= #'eql) old-states
 				  (new-state-fn (error "argument required")))
   "Find a state that satisfies goal-p.  Start with states,
-  and search according to successors and combiner.  
+  and search according to successors and combiner.
   Don't try the same state twice."
   (cond ((null states) nil)
         ((funcall goal-p (first states)) (first states))
@@ -776,7 +779,7 @@ something is putting something on the vertexes plist's
 (defmethod in-cycle-p ((graph basic-graph) (start-vertex basic-vertex))
   (let ((first-time? t))
     (not (null
-          (graph-search-for-cl-graph 
+          (graph-search-for-cl-graph
            (list start-vertex)
            (lambda (v)
              (if first-time?
@@ -797,7 +800,7 @@ something is putting something on the vertexes plist's
               (funcall successors (first states)))))))))
 
 
-(defmethod in-undirected-cycle-p 
+(defmethod in-undirected-cycle-p
            ((graph basic-graph) (current basic-vertex)
             &optional (marked (make-container 'simple-associative-container))
             (previous nil))
@@ -805,7 +808,7 @@ something is putting something on the vertexes plist's
     (setf (item-at-1 marked current) t)
     (iterate-children current
                       (lambda (child)
-                        (cond 
+                        (cond
                          ((eq child previous) nil)
                          ((item-at-1 marked child) (return-from do-it t))
                          (t
@@ -832,23 +835,23 @@ something is putting something on the vertexes plist's
   "Collects set of unique relatives of nodes in node-list."
   (let ((unique-relatives nil))
     (dolist (node node-list)
-      (setf unique-relatives 
+      (setf unique-relatives
             (append-unique (neighbor-vertexes node) unique-relatives)))
     unique-relatives))
 
 
 (defun get-transitive-closure (vertex-list &optional (depth nil))
   "Given a list of vertices, returns a combined list of all of the nodes
-in the transitive closure(s) of each of the vertices in the list 
-(without duplicates).  Optional DEPTH limits the depth (in _both_ the 
-child and parent directions) to which the closure is gathered; default 
+in the transitive closure(s) of each of the vertices in the list
+(without duplicates).  Optional DEPTH limits the depth (in _both_ the
+child and parent directions) to which the closure is gathered; default
 nil gathers the entire closure(s)."
   (labels ((collect-transitive-closure (remaining visited depth)
-             (if (and remaining 
+             (if (and remaining
                       (typecase depth
                         (null t)
                         (fixnum (>= (decf depth) 0))))
-                      
+
               (let* ((non-visited-relatives     ;; list of relatives not yet visited
                        (remove-list visited
                                     (get-nodelist-relatives remaining)))
@@ -898,15 +901,15 @@ nil gathers the entire closure(s)."
 ;;; mapping
 
 (defun map-paths (graph start-vertex length fn &key (filter (constantly t)))
-  "Apply fn to each path that starts at start-vertex and is of exactly length 
-length" 
+  "Apply fn to each path that starts at start-vertex and is of exactly length
+length"
   ;; a sort of depth first search
   (labels ((follow-path (next-vertex current-path length)
              (when (zerop length)
                (funcall fn (reverse current-path)))
              ; (format t "~%~A ~A ~A" current-path next-vertex length)
              (when (plusp length)
-               (iterate-neighbors 
+               (iterate-neighbors
                 next-vertex
                 (lambda (v)
                   (when (funcall filter v)
@@ -914,7 +917,7 @@ length"
                     (unless (find-item current-path v)
                       (let ((new-path  (copy-list current-path)))
                         (follow-path v (push v new-path) (1- length))))))))))
-    (iterate-neighbors 
+    (iterate-neighbors
      start-vertex
      (lambda (v)
        (when (funcall filter v)
@@ -953,20 +956,20 @@ length"
 
 ;;; project-bipartite-graph
 
-(defmethod project-bipartite-graph 
+(defmethod project-bipartite-graph
            ((new-graph symbol) graph vertex-class vertex-classifier)
   (project-bipartite-graph
    (make-instance new-graph) graph vertex-class  vertex-classifier))
 
 
-(defmethod project-bipartite-graph 
+(defmethod project-bipartite-graph
            ((new-graph basic-graph) graph vertex-class vertex-classifier)
   (iterate-vertexes
    graph
    (lambda (v)
      (when (eq (funcall vertex-classifier v) vertex-class)
        (add-vertex new-graph (element v)))))
-  
+
   (iterate-vertexes
    graph
    (lambda (v)
@@ -974,16 +977,16 @@ length"
        (iterate-neighbors
         v
         (lambda (other-class-vertex)
-          (iterate-neighbors 
+          (iterate-neighbors
            other-class-vertex
            (lambda (this-class-vertex)
              (when (< (vertex-id v) (vertex-id this-class-vertex))
-               (add-edge-between-vertexes 
+               (add-edge-between-vertexes
                 new-graph (element v) (element this-class-vertex)
                 :if-duplicate-do (lambda (e) (incf (weight e))))))))))))
-  
+
   new-graph)
-  
+
 #+Test
 (pro:with-profiling
   (setf (ds :g-5000-m-projection)
@@ -991,7 +994,7 @@ length"
          'undirected-graph-container
          (ds :g-5000)
          :m
-         (lambda (v) 
+         (lambda (v)
            (let ((vertex-class (aref (symbol-name (element v)) 0)))
              (cond ((member vertex-class '(#\a #\b) :test #'char-equal)
                     :m)
@@ -1005,7 +1008,7 @@ length"
          'undirected-graph-container
          (ds :g-5000)
          :h
-         (lambda (v) 
+         (lambda (v)
            (let ((vertex-class (aref (symbol-name (element v)) 0)))
              (cond ((member vertex-class '(#\a #\b) :test #'char-equal)
                     :m)
@@ -1018,7 +1021,7 @@ length"
    'undirected-graph-container
    (ds :g-1000)
    :m
-   (lambda (v) 
+   (lambda (v)
      (let ((vertex-class (aref (symbol-name (element v)) 0)))
        (cond ((member vertex-class '(#\x #\y) :test #'char-equal)
               :m)

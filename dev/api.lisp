@@ -23,7 +23,7 @@ be found (or created). In either case, the new graph will be created
 as if with a call to make-instance."))
 
 
-(defgeneric make-edge-for-graph (graph vertex-1 vertex-2 
+(defgeneric make-edge-for-graph (graph vertex-1 vertex-2
                                        &key edge-type edge-class
 				       &allow-other-keys)
   (:documentation "It should not usually necessary to call this in
@@ -77,7 +77,7 @@ the previous edge."))
   (:documentation "Adds a vertex to a graph. If called with a vertex,
   then this vertex is added. If called with a value, then a new vertex
   is created to hold the value. If-duplicate-do can be one
-  of :ignore, :force, :replace, :replace-value or a function. The
+  of :ignore, :force, :replace, :replace-value, :error, or a function. The
   default is :ignore."))
 
 
@@ -204,7 +204,7 @@ tree rooted at root."))
 
 (defgeneric untagged-edge-p (edge)
   (:documentation "Returns true if-and-only-if edge's tage slot is nil"))
-          
+
 
 (defgeneric adjacentp (graph vertex-1 vertex-2)
   (:documentation "Return true if vertex-1 and vertex-2 are connected
@@ -225,12 +225,12 @@ original graph).  There are four options for how the new graph is
 filled-out, depending on the following keywords passed to the optional
 GRAPH-COMPLETION-METHOD argument:
 
-*  NIL (default)    
+*  NIL (default)
 
      New graph has only nodes that correspond to those in the original
        graph that pass the test.  NO LINKS are reproduced.
 
-*  :COMPLETE-LINKS  
+*  :COMPLETE-LINKS
 
      New graph has only nodes that pass, but reproduces corresponding
        links between passing nodes in the original graph.
@@ -254,7 +254,7 @@ indicating that all vertexes are to be included, no matter their
 depth.  This value is ignored in non closure options."))
 
 
-(defgeneric project-bipartite-graph  
+(defgeneric project-bipartite-graph
   (new-graph existing-graph vertex-class vertex-classifier)
   (:documentation "Creates the unimodal bipartite projects of
 existing-graph with vertexes for each vertex of existing graph whose
@@ -273,14 +273,14 @@ or the URL 'http://arxiv.org/abs/cond-mat/0209450'."))
 
 
 (defgeneric graph->dot (graph output
-                       &key 
+                       &key
                        graph-formatter
                        vertex-key
                        vertex-labeler
                        vertex-formatter
-                       edge-labeler 
+                       edge-labeler
                        edge-formatter)
-  (:documentation 
+  (:documentation
    "Generates a description of `graph` in DOT file format. The
    formatting can be altered using `graph->dot-properties,`
    `vertex->dot,` and `edge->dot` as well as `edge-formatter,`
@@ -315,7 +315,7 @@ Here is an example;
     D->F []
     }\"
 
-For more information about DOT file format, search the web for 'DOTTY' and 
+For more information about DOT file format, search the web for 'DOTTY' and
 'GRAPHVIZ'."))
 
 
@@ -353,7 +353,7 @@ with probability p. This implementation is from Efficient Generation
 of Large Random Networks \(see batagelj-generation-2005 in doab\)."))
 
 
-(defgeneric generate-undirected-graph-via-assortativity-matrix 
+(defgeneric generate-undirected-graph-via-assortativity-matrix
   (generator graph-class size edge-count kind-matrix assortativity-matrix
              vertex-labeler &key)
   (:documentation "This generates a random graph with 'size' vertexes.
@@ -371,7 +371,7 @@ and the index. It should return whatever the 'value' of the vertex
 ought to be."))
 
 
-(defgeneric generate-undirected-graph-via-vertex-probabilities 
+(defgeneric generate-undirected-graph-via-vertex-probabilities
   (generator graph-class size kind-matrix probability-matrix vertex-labeler)
   (:documentation "Generate an Erd\"os-R/'enyi like random graph
 having multiple vertex kinds. See the function Gnp for the simple one
@@ -392,7 +392,7 @@ from Efficient Generation of Large Random Networks \(see
 batagelj-generation-2005 in moab\)."))
 
 
-(defgeneric generate-scale-free-graph 
+(defgeneric generate-scale-free-graph
   (generator graph size kind-matrix add-edge-count
              other-vertex-kind-samplers vertex-labeler &key)
   (:documentation "Generates a 'scale-free' graph using preferential
@@ -422,9 +422,9 @@ implementation is from Efficient Generation of Large Random Networks
 \(see batagelj-generation-2005 in moab\). Self-edges are possible."))
 
 
-(defgeneric generate-preferential-attachment-graph 
-  (generator graph size kind-matrix minimum-degree 
-             assortativity-matrix 
+(defgeneric generate-preferential-attachment-graph
+  (generator graph size kind-matrix minimum-degree
+             assortativity-matrix
              &key)
   (:documentation "Generate a Barabasi-Albert type scale free graph
   with multiple vertex kinds.
@@ -620,7 +620,7 @@ as a source. [?? Could be a defun]."))
   of `edge`. If the value-or-vertex is not part of edge, then an error
   is signaled. [?? Should create a new condition for this]"))
 
-(defgeneric find-edge-between-vertexes-if 
+(defgeneric find-edge-between-vertexes-if
   (graph value-or-vertex-1 value-or-vertex-2 fn &key error-if-not-found?)
   (:documentation "Finds and returns an edge between value-or-vertex-1
   and value-or-vertex-2 if one exists. Unless error-if-not-found? is
