@@ -154,8 +154,6 @@ a - b - e
 
 (deftestsuite test-change-vertex-value (test-basic-graph-properties) ())
 
-;;; ---------------------------------------------------------------------------
-
 (addtest (test-change-vertex-value)
   test-undirected
   (let ((b (find-vertex graph-undirected 'b)))
@@ -166,9 +164,31 @@ a - b - e
     (ensure (find-edge-between-vertexes graph-undirected 'a 'x))
     (ensure (find-edge-between-vertexes graph-undirected 'x 'd))))
 
+;;;
+
+(deftestsuite test-rootp (cl-graph-test)
+  ((g (make-container 'graph-container
+		      :default-edge-type :directed)))
+  (:setup
+    (loop for (v1 . v2) in '((a . b) (a . c) (b . d) (c . e)) do
+	 (add-edge-between-vertexes g v1 v2))))
+
+(addtest (test-rootp)
+  directed-edges
+  (ensure (directed-edge-p (first-item (graph-edges g)))))
+
+(addtest(test-rootp)
+  test-source-vertex
+  (ensure (rootp (find-vertex g 'a))))
+
+(addtest(test-rootp)
+  test-sink-vertex
+  (ensure-null (rootp (find-vertex g 'e))))
+
+(addtest(test-rootp)
+  test-middle-vertex
+  (ensure-null (rootp (find-vertex g 'b))))
 
 
-;;; ---------------------------------------------------------------------------
-;;; test-replace-edge
-;;; ---------------------------------------------------------------------------
-
+  
+    
