@@ -644,9 +644,17 @@ something is putting something on the vertexes plist's
   (collect-elements (graph-vertexes graph) :filter #'rootp))
 
 
+(defmethod graph-leafs ((graph basic-graph))
+  (collect-elements (graph-vertexes graph) :filter #'leafp))
+
+
 (defmethod rootp ((vertex basic-vertex))
   ;;?? this is inefficient in the same way that (zerop (length <list>)) is...
   (zerop (target-edge-count vertex)))
+
+
+(defmethod leafp ((vertex basic-vertex))
+  (zerop (source-edge-count vertex)))
 
 
 (defmethod find-vertex-if ((graph basic-graph) fn &key key)
