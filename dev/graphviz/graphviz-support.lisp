@@ -6,7 +6,7 @@ Author: Gary King, Levente Mészáros, Attila Lendvai
 
 DISCUSSION
 
-This file contains the stuff that does not depend on cl-graphviz.
+This file contains the stuff that does not depend on hu.dwim.graphviz.
 
 |#
 (in-package #:metabang.graph)
@@ -60,7 +60,8 @@ This file contains the stuff that does not depend on cl-graphviz.
              (princ " [" stream)
              (when (and directed? directed-edge-tag)
                (princ directed-edge-tag stream))
-             (when edge-labeler
+             (when (and edge-labeler
+                        (not (dot-attribute-value :label e)))
                (princ "label=\"" stream)
                (funcall edge-labeler e stream)
                (princ "\"," stream))
@@ -267,7 +268,7 @@ B--D []
     (:height float)
     (:width float)
     (:margin float)
-    (:fixed-size boolean)
+    (:fixedsize boolean)
     (:label text)
     (:shape (:record :plaintext :ellipse :circle :egg :triangle :box
              :diamond :trapezium :parallelogram :house :hexagon :octagon
@@ -284,6 +285,7 @@ B--D []
 
 (defparameter *dot-edge-attributes*
   '((:pos spline)
+    (:lp coordinate)
     (:minlen integer)
     (:weight integer)
     (:label text)
@@ -354,7 +356,7 @@ B--D []
   (getf (dot-attributes thing) attr))
 
 (defmacro defpixel-inch-accessors (name attr type)
-  (let ((actual-name (form-symbol name (symbol-name '-in-pixels))))
+  (let ((actual-name (form-symbol name "-IN-PIXELS")))
     `(progn
        (eval-always (export ',actual-name))
       (defmethod ,actual-name ((thing ,type))
@@ -496,11 +498,11 @@ B--D []
 #+(or linux unix)
 (defvar *dot-path* "/usr/bin/dot" "Path to `dot`")
 
-(defmethod graph->dot-external ((g basic-graph) file-name &key (type :ps))
+(defmethod graph->dot-external ((g basic-graph) file-name &rest args &key (type :ps) &allow-other-keys)
   "Generate an external represenation of a graph to a file, by running
 the program in *dot-path*."
   (declare (ignorable file-name))
-  (let ((dot-string (graph->dot g nil))
+  (let ((dot-string (apply #'graph->dot g nil args))
         (dot-type (concatenate 'string "-T" (string-downcase (symbol-name type)))))
     (declare (ignorable dot-string dot-type))
     #+lispworks (with-open-stream
