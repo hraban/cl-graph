@@ -271,7 +271,7 @@ DISCUSSION
 
 
 (defmethod has-children-p ((vertex graph-container-vertex))
-  (iterate-target-edges vertex
+  (iterate-source-edges vertex
                         (lambda (edge)
                           (declare (ignore edge))
                           (return-from has-children-p t)))
@@ -279,7 +279,7 @@ DISCUSSION
 
 
 (defmethod has-parent-p ((vertex graph-container-vertex))
-  (iterate-source-edges vertex
+  (iterate-target-edges vertex
                         (lambda (edge)
                           (declare (ignore edge))
                           (return-from has-parent-p t)))

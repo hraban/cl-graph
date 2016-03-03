@@ -146,7 +146,7 @@ be raised if the vertex is not found or is not part of the graph."))
 (defgeneric has-children-p (vertex)
   (:documentation "In a directed graph, returns true if vertex has any
   edges that point from vertex to some other
-  vertex (cf. iterate-target-edges). In an undirected graph,
+  vertex (cf. iterate-source-edges). In an undirected graph,
   `has-children-p` is testing only whether or not the vertex has any
   edges."))
 
@@ -154,7 +154,7 @@ be raised if the vertex is not found or is not part of the graph."))
 (defgeneric has-parent-p (vertex)
   (:documentation "In a directed graph, returns true if vertex has any
   edges that point from some other vertex to this
-  vertex (cf. iterate-source-edges). In an undirected graph,
+  vertex (cf. iterate-target-edges). In an undirected graph,
   `has-parent-p` is testing only whether or not the vertex has any
   edges."))
 
