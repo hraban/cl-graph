@@ -23,15 +23,18 @@ DISCUSSION
   (:default-initargs
     :vertex-class 'graph-container-vertex
     :directed-edge-class 'graph-container-directed-edge
-    :undirected-edge-class 'graph-container-edge)
+    :undirected-edge-class 'graph-container-undirected-edge)
   (:export-p t)
   (:documentation "A graph container is essentially an adjacency list graph representation [?? The Bad name comes from it being implemented with containers... ugh]"))
 
 
 (defclass* graph-container-edge (basic-edge)
-  ((vertex-1 nil ir "`Vertex-1` is one of the two vertexes that an edge connects. In a directed-edge, `vertex-1` is also the `source-edge`.")
-   (vertex-2 nil ir "`Vertex-2` is one of the two vertexes that an edge connects. In a directed edge, `vertex-2` is also the `target-vertex`."))
-  (:export-slots vertex-1 vertex-2)
+  ((vertex-1 nil ir "`Vertex-1` is one of the two vertexes that an edge connects. In a directed-edge, `vertex-1` is also the `source-vertex`.")
+   (vertex-2 nil ir "`Vertex-2` is one of the two vertexes that an edge connects. In a directed edge, `vertex-2` is also the `target-vertex`.")
+   ;(endvertexes nil ir "`Endvertexes` are the two vertices which together comprise an edge.")
+   )
+  (:export-slots vertex-1 vertex-2 ;endvertexes
+		 )
   (:export-p t)
   (:documentation "This is the root class for edges in graph-containers. It adds vertex-1 and vertex-2 slots."))
 
@@ -76,6 +79,14 @@ DISCUSSION
 (defmethod make-edge-container ((graph graph-container) initial-size) 
   (make-container 'vector-container :initial-size initial-size
                   :fill-pointer 0))
+
+;;; graph-container-undirected-edge
+
+(defclass* graph-container-undirected-edge (undirected-edge-mixin 
+					    graph-container-edge)
+  ()
+  (:export-p t)
+  (:documentation "A graph-container-undirected-edge is both an undirected-edge-mixin and a graph-container-edge."))
 
 
 ;;; graph-container-directed-edge
@@ -125,19 +136,56 @@ DISCUSSION
   (other-vertex edge (find-vertex edge value)))
 
 
+;;; Managing the vertex-pair->edge table
+(defmethod associate-edge-with-pair ((graph graph-container) (edge graph-container-edge))
+  (push edge (item-at-1 (vertex-pair->edge graph)
+			(cons (vertex-1 edge) (vertex-2 edge)))))
+
+(defmethod associate-edge-with-pair :after ((graph graph-container) (edge undirected-edge-mixin))
+  ; since it is undirected, index this edge with both endvertex orderings
+  (push edge (item-at-1 (vertex-pair->edge graph)
+			(cons (vertex-2 edge) (vertex-1 edge)))))
+
+(defun dissoc-val-from-key-or-delete (container index val)
+  (let* ((l (delete val (item-at-1 container index) :test #'eq)))
+    (if (null l)
+	(delete-item-at container index)
+	(setf (item-at-1 container index) l))))
+
+(defmethod dissociate-edge-from-pair ((graph graph-container) (edge graph-container-edge))
+  (dissoc-val-from-key-or-delete (vertex-pair->edge graph)
+				 (cons (vertex-1 edge) (vertex-2 edge)) edge))
+
+(defmethod dissociate-edge-from-pair ((graph graph-container) (edge undirected-edge-mixin))
+  (dissoc-val-from-key-or-delete (vertex-pair->edge graph)
+				 (cons (vertex-2 edge) (vertex-1 edge)) edge))
+
+
+; Replacing a vertex means carefully reindexing its incident edges in
+; the endvertex lookup table for the graph-container.
+
+;; Before replacing the vertex, we forget its related endvertex lookups
+(defmethod replace-vertex :before ((graph graph-container) (old basic-vertex) (new basic-vertex))
+  (iterate-edges old (lambda (e) (dissociate-edge-from-pair graph e))))
+
+;; After replacing the vertex, we fix the endvertex lookups
+(defmethod replace-vertex :after ((graph graph-container) (old basic-vertex) (new basic-vertex))
+  (iterate-edges new (lambda (e) (associate-edge-with-pair graph e))))
+
+
 (defmethod add-edge ((graph graph-container) (edge graph-container-edge)
                      &key force-new?)
   (declare (ignore force-new?))
   
   (let ((vertex-1 (vertex-1 edge))
-         (vertex-2 (vertex-2 edge)))
+	(vertex-2 (vertex-2 edge)))
         
     (cond ((eq vertex-1 vertex-2)
            (add-edge-to-vertex edge vertex-1))
           (t
            (add-edge-to-vertex edge vertex-1)
            (add-edge-to-vertex edge vertex-2)))
-    (push edge (item-at-1 (vertex-pair->edge graph) (cons vertex-1 vertex-2))))
+    (associate-edge-with-pair graph edge))
   edge)
 
 
@@ -203,10 +251,7 @@ DISCUSSION
         (vertex-2 (vertex-2 edge)))
     (delete-item (vertex-edges vertex-1) edge)
     (delete-item (vertex-edges vertex-2) edge)
-    (setf (item-at-1 (vertex-pair->edge graph) (cons vertex-1 vertex-2))
-          (delete edge
-                  (item-at-1 (vertex-pair->edge graph) (cons vertex-1 vertex-2))
-                  :test #'eq)))
+    (dissociate-edge-from-pair graph edge))
   edge)
 
 (defmethod delete-all-edges ((graph graph-container))
