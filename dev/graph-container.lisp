@@ -50,6 +50,16 @@ DISCUSSION
   (:export-p t)
   (:documentation "A weighted edge is both a weighted-edge-mixin and a graph-container-edge."))
 
+(defclass* weighted-directed-edge (weighted-edge-mixin graph-container-directed-edge)
+  ()
+  (:export-p t)
+  (:documentation "A weighted edge is a weighted-edge-mixin, a directed-edge-mixin, and a graph-container-edge."))
+
+(defclass* weighted-undirected-edge (weighted-edge-mixin graph-container-undirected-edge)
+  ()
+  (:export-p t)
+  (:documentation "A weighted undirected edge is a weighted-edge-mixin, an undirected-edge-mixin, and a graph-container-edge."))
+
 
 (defclass* graph-container-vertex (basic-vertex)
   ((vertex-edges nil r))
@@ -156,7 +166,7 @@ DISCUSSION
   (dissoc-val-from-key-or-delete (vertex-pair->edge graph)
 				 (cons (vertex-1 edge) (vertex-2 edge)) edge))
 
-(defmethod dissociate-edge-from-pair ((graph graph-container) (edge undirected-edge-mixin))
+(defmethod dissociate-edge-from-pair :after ((graph graph-container) (edge undirected-edge-mixin))
   (dissoc-val-from-key-or-delete (vertex-pair->edge graph)
 				 (cons (vertex-2 edge) (vertex-1 edge)) edge))
 
