@@ -117,9 +117,16 @@ something is putting something on the vertexes plist's
     (format stream "<~A ~A>" (vertex-1 object) (vertex-2 object))))
 
 
-(defclass* directed-edge-mixin () ()
+(defclass* directed-edge-mixin ()
+  ()
   (:export-p t)
   (:documentation "This mixin class is used to indicate that an edge is directed."))
+
+
+(defclass* undirected-edge-mixin ()
+  ()
+  (:export-p t)
+  (:documentation "This mixin class is used to indicate that an edge is undirected."))
 
 
 (defclass* weighted-edge-mixin ()
@@ -141,12 +148,12 @@ something is putting something on the vertexes plist's
                  "The class of the vertexes in the graph. This must extend the base-class for vertexes of the graph type. E.g., all vertexes of a graph-container must extend graph-container-vertex.")
    (directed-edge-class 'basic-directed-edge ir
                         "The class used to create directed edges in the graph. This must extend the base-class for edges of the graph type and directed-edge-mixin. E.g., the directed-edge-class of a graph-container must extend graph-container-edge and directed-edge-mixin.")
-   (undirected-edge-class 'basic-edge ir
-                          "The class used to create undirected edges in the graph. This must extend the base-class for edges of the graph type. E.g., all edges of a graph-container must extend graph-container-edge")
+   (undirected-edge-class 'basic-undirected-edge ir
+                          "The class used to create undirected edges in the graph. This must extend the base-class for edges of the graph type and undirected-edge-mixin. E.g., all undirected edges of a graph-container must extend graph-container-edge and undirected-edge-mixin.")
    (contains-directed-edge-p nil ar
-                             "Returns true if graph contains at least one directed edge. [?? Not sure if this is really keep up-to-date.]")
+                             "Returns true if graph contains at least one directed edge. [?? Not sure if this is really kept up-to-date.]")
    (contains-undirected-edge-p nil ar
-                               "Returns true if graph contains at least one undirected edge. [?? Not sure if this is really keep up-to-date.]")
+                               "Returns true if graph contains at least one undirected edge. [?? Not sure if this is really kept up-to-date.]")
    (vertex-test #'eq ir)
    (vertex-key #'identity ir)
    (edge-test #'eq ir)
@@ -331,20 +338,24 @@ something is putting something on the vertexes plist's
 (defmethod replace-vertex ((graph basic-graph) (old basic-vertex) (new basic-vertex))
   ;; we need the graph and the new vertex to reference each other
   ;; we need every edge of the old vertex to use the new-vertex
+  ;; we need the edge list of the old vertex to be emptied
   ;; we need to remove the old vertex
-  ;;
-  ;; since I'm tired today, let's ignore trying to make this elegant
 
-  ;; first, we connect the edges to the new vertex so that they don't get deleted
-  ;; when we delete the old vertex
+  ;; first, we connect the edges incident to the old vertex to the new
+  ;; vertex
   (iterate-edges
    old
    (lambda (e)
      (if (eq (vertex-1 e) old)
-       (setf (slot-value e 'vertex-1) new) (setf (slot-value e 'vertex-2) new))
+	 (setf (slot-value e 'vertex-1) new)
+	 (setf (slot-value e 'vertex-2) new))
      (add-edge-to-vertex e new)))
-
+  ;; next, *we must remove all edges from the old vertex* so they
+  ;; don't also get deleted when we delete the old vertex
+  (empty! (vertex-edges old))
+  ;; then, we delete the old vertex from the graph
   (delete-vertex graph old)
+  ;; finally, we add the new vertex to the graph
   (add-vertex graph new))
 
 
@@ -364,15 +375,33 @@ something is putting something on the vertexes plist's
 
 (defmethod add-edge-between-vertexes ((graph basic-graph)
                                       (v-1 basic-vertex) (v-2 basic-vertex)
-                                      &rest args &key
-                                      (value nil) (if-duplicate-do :ignore)
+                                      &rest args
+				      &key (value nil) (if-duplicate-do :ignore)
+					(edge-type (default-edge-type graph))
+					(edge-class (default-edge-class graph))
                                       &allow-other-keys)
   (declare (dynamic-extent args))
   (remf args :if-duplicate-do)
-
-  (let ((edge (find-edge-between-vertexes graph v-1 v-2 :error-if-not-found? nil)))
+; Here, check if we know the edge-type/edge-class, and handle the
+; graph-edge-not-found-error for non-directed edges in such a way that
+; _both_ orderings of endvertices are checked.  There are three ways
+; to avoid checking both orderings: First, make the graph use directed
+; edges by default; second, specify the edge-type as :directed; third,
+; specify an edge-class that is a directed-edge-mixin.
+  (let ((edge (handler-case (find-edge-between-vertexes graph v-1 v-2 :error-if-not-found? t)
+		(graph-edge-not-found-error (enf)
+		  (when (or 
+			 ; avoid by using directed edges by default
+			 (not (subtypep (default-edge-class graph) 'directed-edge-mixin))
+			 ; avoid with :directed edge-type specified
+			 (and (not (null edge-type))
+			      (not (eq edge-type :directed)))
+			 ; avoid with a specified directed edge-class
+			 (and (not (null edge-class))
+			      (not (subtypep edge-class 'directed-edge-mixin))))
+		    (find-edge-between-vertexes graph v-2 v-1 :error-if-not-found? nil))))))
     (flet ((add-it (why)
-             (values (add-edge
+             (values (add-edge ; method must be specialized for impl of basic-graph
                       graph
                       (apply #'make-edge-for-graph graph v-1 v-2 args))
                      why)))
@@ -407,11 +436,15 @@ something is putting something on the vertexes plist's
         (add-it :new)))))
 
 
-
+;; There is never intended to be an instance of basic-edge or
+;; basic-vertex directly, only subclasses. This method is a
+;; placeholder to suggest that.
 (defmethod add-edge-to-vertex ((edge basic-edge) (vertex basic-vertex))
   (values))
 
 
+;; Implementations of basic-graph must specialize this method for args
+;; ((graph basic-graph) (value-1 basic-vertex) (value-2 basic-vertex))
 (defmethod find-edge-between-vertexes
     ((graph basic-graph) (value-1 t) (value-2 t)
      &key (error-if-not-found? t))
