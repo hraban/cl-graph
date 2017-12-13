@@ -1,6 +1,6 @@
-;;; -*- Mode: Lisp; package: cl-user; Syntax: Common-lisp; Base: 10 -*-
+;;; -*- Mode: Lisp; package: asdf-user; Syntax: Common-lisp; Base: 10 -*-
 
-(defsystem :cl-graph+hu.dwim.graphviz
+(defsystem "cl-graph+hu.dwim.graphviz"
   :author "Gary Warren King <gwking@metabang.com>"
   :maintainer "Gary Warren King <gwking@metabang.com>"
   :licence "MIT Style License"
@@ -10,5 +10,4 @@
                 ((:module "graphviz"
                   :components
                   ((:file "graphviz-support-optional"))))))
-  :depends-on (:cl-graph
-               :hu.dwim.graphviz))
+  :depends-on ("cl-graph" "hu.dwim.graphviz"))

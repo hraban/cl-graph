@@ -1,29 +1,15 @@
-;;; -*- Mode: Lisp; package: cl-user; Syntax: Common-lisp; Base: 10 -*-
+;;; -*- Mode: Lisp; package: asdf-user; Syntax: Common-lisp; Base: 10 -*-
 
-(in-package #:common-lisp-user)
-(defpackage #:cl-graph-system (:use #:cl #:asdf))
-(in-package #:cl-graph-system)
-
-(unless (or (member :asdf-system-connections *features*)
-	    (find-system 'asdf-system-connections nil))
-  (warn "The CL-Graph system would enjoy having asdf-system-connections 
-around. See 
-http://www.cliki.net/asdf-system-connections for details and download
-instructions."))
-(when (and (not (member :asdf-system-connections *features*))
-	   (find-system 'asdf-system-connections nil))
-  (operate 'load-op 'asdf-system-connections))
-
-(defsystem cl-graph
+(defsystem "cl-graph"
   :version "0.10.2"
   :author "Gary Warren King <gwking@metabang.com>"
   :maintainer "Gary Warren King <gwking@metabang.com>"
   :licence "MIT Style License"
   :description "Graph manipulation utilities for Common Lisp"
   :components ((:static-file "COPYING")
-	       (:module 
-		"dev"
-		:components 
+               (:module
+                "dev"
+                :components
 		((:file "package")
 		 (:file "api"
 			:depends-on ("package"))
@@ -44,72 +30,60 @@ instructions."))
 
 		 (:module "graphviz" :depends-on ("graph")
 			  :components ((:file "graphviz-support")))))
-               (:module 
-		"website"
-		:components 
+               (:module
+                "website"
+		:components
 		((:module "source"
-			  :components ((:static-file "index.md"))))))
-  :in-order-to ((test-op (load-op :cl-graph-test)))
-  :perform (test-op :after (op c)
-		    (funcall
-		      (intern (symbol-name '#:run-tests) :lift)
-		      :config :generic))
-  :depends-on ((:version :metatilities-base "0.6.0")
-	       (:version :cl-containers "0.12.0")
-	       :metabang-bind
-	       ))
+			  :components ((:static-file "index.mmd"))))))
+  :in-order-to ((test-op (load-op "cl-graph-test")))
+  :perform (test-op (op c) (symbol-call :lift :run-tests :config :generic))
+  :depends-on ((:version "metatilities-base" "0.6.0")
+               (:version "cl-containers" "0.12.0")
+               "metabang-bind"))
 
-(defmethod operation-done-p 
-           ((o test-op) (c (eql (find-system 'cl-graph))))
-  (values nil))
+(load-system "asdf-system-connections")
 
-#+asdf-system-connections
-(asdf:defsystem-connection cl-graph-and-cl-variates
-  :requires (cl-graph cl-variates)
-  :components ((:module 
+(defsystem-connection "cl-graph/with-cl-variates"
+  :requires ("cl-graph" "cl-variates")
+  :components ((:module
 		"dev"
 		:components
 		((:file "graph-and-variates")
 		 (:file "graph-generation"
 			:depends-on ("graph-and-variates"))))))
 
-#+asdf-system-connections
-(asdf:defsystem-connection cl-graph-and-dynamic-classes
-  :requires (cl-graph dynamic-classes)
-  :components ((:module 
+(defsystem-connection "cl-graph/with-dynamic-classes"
+  :requires ("cl-graph" "dynamic-classes")
+  :components ((:module
 		"dev"
 		:components
 		((:file "dynamic-classes")))))
 
-#+asdf-system-connections
-(asdf:defsystem-connection cl-graph-and-cl-graphviz
-  :requires (cl-graph cl-graphviz)
-  :components ((:module 
+(defsystem-connection "cl-graph/with-cl-graphviz"
+  :requires ("cl-graph" "cl-graphviz")
+  :components ((:module
 		"dev"
 		:components
 		((:module "graphviz"
 			  :components
 			  ((:file "graphviz-support-optional")))))))
 
-#+asdf-system-connections
-(asdf:defsystem-connection cl-graph-and-metacopy
-  :requires (cl-graph metacopy)
-  :components ((:module 
+(defsystem-connection "cl-graph/with-metacopy"
+  :requires ("cl-graph" "metacopy")
+  :components ((:module
 		"dev"
 		:components ((:file "copying")))))
 
-#+asdf-system-connections
-(asdf:defsystem-connection cl-graph-and-cl-mathstats
-  :requires (cl-graph cl-mathstats)
-  :components ((:module 
+(defsystem-connection "cl-graph/with-cl-mathstats"
+  :requires ("cl-graph" "cl-mathstats")
+  :components ((:module
 		"dev"
 		:components
 		((:file "graph-metrics")))))
 
-#+asdf-system-connections
-(asdf:defsystem-connection cl-graph-and-moptilities
-  :requires (cl-graph moptilities)
-  :components ((:module 
+(defsystem-connection "cl-graph/with-moptilities"
+  :requires ("cl-graph" "moptilities")
+  :components ((:module
 		"dev"
 		:components
 		((:file "subgraph-containing")))))
