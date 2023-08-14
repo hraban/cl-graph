@@ -48,7 +48,7 @@ DISCUSSION
    #:rootp                         ; vertex
    #:leafp                         ; vertex
    #:graph-roots                   ; graph
-   #:graph-leafs                   ; graph
+   #:graph-leaves                  ; graph
    
    #:topological-sort              ; graph
    #:depth                         ; graph | vertex

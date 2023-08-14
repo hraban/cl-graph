@@ -550,8 +550,8 @@ as a source. [?? Could be a defun]."))
   are out-going\). (cf. rootp) [?? could be a defun]"))
 
 
-(defgeneric graph-leafs (graph)
-  (:documentation "Returns a list of the leafs of graph. A leaf is
+(defgeneric graph-leaves (graph)
+  (:documentation "Returns a list of the leaves of graph. A leaf is
   defined as a vertex with no target edges \(i.e., all of the edges
   are incoming\). (cf. targetp) [?? could be a defun]"))
 
