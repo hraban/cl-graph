@@ -46,7 +46,9 @@ DISCUSSION
    #:target-edge-count             ; vertex
    
    #:rootp                         ; vertex
+   #:leafp                         ; vertex
    #:graph-roots                   ; graph
+   #:graph-leaves                  ; graph
    
    #:topological-sort              ; graph
    #:depth                         ; graph | vertex

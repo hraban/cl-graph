@@ -550,9 +550,20 @@ as a source. [?? Could be a defun]."))
   are out-going\). (cf. rootp) [?? could be a defun]"))
 
 
+(defgeneric graph-leaves (graph)
+  (:documentation "Returns a list of the leaves of graph. A leaf is
+  defined as a vertex with no target edges \(i.e., all of the edges
+  are incoming\). (cf. targetp) [?? could be a defun]"))
+
+
 (defgeneric rootp (vertex)
   (:documentation "Returns true if `vertex` is a root vertex \(i.e.,
   it has no incoming \(source\) edges\)."))
+
+
+(defgeneric leafp (vertex)
+  (:documentation "Returns true if `vertex` is a leaf vertex \(i.e.,
+  it has no outgoing \(target\) edges\)."))
 
 
 (defgeneric find-vertex-if (thing predicate &key key)
